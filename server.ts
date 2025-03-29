@@ -2,9 +2,13 @@ import express from "express";
 const cors = require('cors');
 import sequelize from "./src/database/models/db";
 const app = express();
+import userRoutes from "./src/routes/userRoutes";
+
 app.use(cors());
 
 app.use(express.json());
+app.use("/api/users", userRoutes);
+
 
 
 app.use(cors({
