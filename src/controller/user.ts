@@ -42,7 +42,6 @@ export const signup = async (req, res) => {
   export const login = async (req , res) => {
     try {
       const { email, password,role } = req.body;
-      console.log("Login attempt:", email);
   
       const user = await User.findOne({ where: { email } });
       if(role!=user.role){
@@ -55,11 +54,8 @@ export const signup = async (req, res) => {
         return res.status(400).json({ success: false, message: "Invalid email or password" });
       }
   
-      console.log("Stored password hash:", user.passwordHash);
-      console.log("Entered password:", password);
-  
+
       const isMatch = await user.validPassword(password);
-      console.log("Password match result:", isMatch);
   
       if (!isMatch) {
         return res.status(400).json({success: false, message: "Invalid email or password" });

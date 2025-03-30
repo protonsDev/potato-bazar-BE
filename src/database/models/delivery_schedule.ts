@@ -23,7 +23,7 @@ DeliverySchedule.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: RFQ,
+        model: "rfqs", 
         key: "id",
       },
       onDelete: "CASCADE",
@@ -40,6 +40,10 @@ DeliverySchedule.init(
       type: DataTypes.DATE,
       allowNull: false,
     },
+    pricePerUnit: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+    },
   },
   {
     sequelize,
@@ -50,7 +54,7 @@ DeliverySchedule.init(
   }
 );
 
-// Define relationship
 DeliverySchedule.belongsTo(RFQ, { foreignKey: "rfqId", as: "rfq" });
+RFQ.hasMany(DeliverySchedule, { foreignKey: "rfqId", as: "deliverySchedules" });
 
 export default DeliverySchedule;

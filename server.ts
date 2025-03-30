@@ -4,12 +4,15 @@ import sequelize from "./src/database/models/db";
 const app = express();
 import userRoutes from "./src/routes/userRoutes";
 import rfqRoutes from "./src/routes/rfqRoutes";
+import quoteRoutes from "./src/routes/quoteRoutes";
 
 app.use(cors());
 
 app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/rfq", rfqRoutes);
+app.use("/api/quote", quoteRoutes);
+
 
 
 

@@ -1,6 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "./db";
 import User from "./user";
+import DeliverySchedule from "./delivery_schedule";
 
 class RFQ extends Model {
   public id!: number;
@@ -107,5 +108,6 @@ RFQ.init(
 
 // Define relationship with User model
 RFQ.belongsTo(User, { foreignKey: "buyerId", as: "buyer" });
+
 
 export default RFQ;

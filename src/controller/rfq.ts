@@ -1,4 +1,4 @@
-import { createRFQDB, getRFQsDB, getRFQByIdDB, addSuppliersToRFQ } from "../services/rfqService";
+import { createRFQDB, getRFQsDB, getRFQByIdDB, addSuppliersToRFQ , getSupplierRFQsService, getRFQDetails} from "../services/rfqService";
 
 export const createRFQ = async (req, res) => {
   try {
@@ -140,3 +140,56 @@ export const addSuppliers = async (req, res) => {
     });
   }
 };
+
+export const getSupplierRFQsController = async (req, res) => {
+  try {
+    const supplierId = Number(req.user.id);
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const search = (req.query.search as string) || "";
+
+
+    const result = await getSupplierRFQsService(
+      supplierId,
+      page,
+      limit,
+      search,
+    );
+
+    return res.json({
+      success: true,
+      data: result.rfqs,
+      pagination: result.pagination,
+    });
+  } catch (error) {
+    console.error("Error fetching supplier RFQs:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error fetching supplier RFQs.",
+    });
+  }
+};
+
+export const getSupplierRFQsDetails = async (req, res) => {
+  try {
+     const rfqId = req.query.rfqId;
+
+    if (isNaN(rfqId)) {
+      return res.status(400).json({ success: false, message: "Invalid rfqId." });
+    }
+
+    const result = await getRFQDetails(rfqId);
+
+    return res.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error fetching  RFQs:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error fetching  RFQs.",
+    });
+  }
+};
+
