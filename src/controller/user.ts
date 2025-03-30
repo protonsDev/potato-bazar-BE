@@ -1,4 +1,4 @@
-import { createUserInDB ,findUserInDB, findUserByPkInDB} from "../services/userService";
+import { createUserInDB ,findUserInDB, findUserByPkInDB, findSellerList} from "../services/userService";
 
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -97,4 +97,29 @@ export const signup = async (req, res) => {
       return res.status(500).json({ success: false, message: "Error fetching user profile", error });
     }
   };
+
+
+export const getSellerList = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, search = "" } = req.query;
+
+    const pageNumber = parseInt(page, 10);
+    const pageSize = parseInt(limit, 10);
+
+    const sellers = await findSellerList(pageNumber, pageSize, search);
+
+    return res.status(200).json({
+      success: true,
+      data: sellers,
+      message: "Seller list fetched successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching seller list",
+      error: error.message,
+    });
+  }
+};
+
   

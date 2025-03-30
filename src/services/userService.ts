@@ -39,3 +39,36 @@ export const updateUserInDB = async (user, user_data) => {
   }
 };
 
+export const findSellerList = async (page, limit, search) => {
+  try {
+    const offset = (page - 1) * limit; 
+
+    const { rows: sellers, count: totalSellers } = await User.findAndCountAll({
+      where: {
+        role: "seller",
+        companyName: {
+          [Op.iLike]: `%${search}%`,
+        },
+      },
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]], 
+    });
+
+    return {
+      sellers,
+      pagination: {
+        total: totalSellers,
+        page,
+        limit,
+        totalPages: Math.ceil(totalSellers / limit),
+      },
+    };
+  } catch (error) {
+    throw new Error(`Error fetching seller list: ${error.message}`);
+  }
+};
+
+
+
+

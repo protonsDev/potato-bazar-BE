@@ -43,3 +43,13 @@ export const rfqSchema = Joi.object({
     .required()
     .label("Delivery Schedules"),
 });
+
+
+export const rfqSupplierSchema = Joi.object({
+  rfqId: Joi.number().integer().positive().required().label("RFQ ID"),
+  supplierIds: Joi.array()
+    .items(Joi.number().integer().positive())
+    .min(1)
+    .required()
+    .label("Supplier IDs"),
+});

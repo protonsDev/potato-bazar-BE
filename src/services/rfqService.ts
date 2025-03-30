@@ -1,6 +1,7 @@
 import RFQ from "../database/models/rfqs";
 import DeliverySchedule from "../database/models/delivery_schedule";
 import  sequelize  from "../database/models/db"; 
+import RFQSupplier from "../database/models/rfqSupplier";
 
 export const createRFQDB = async (rfqData) => {
   const transaction = await sequelize.transaction();
@@ -51,5 +52,20 @@ export const getRFQByIdDB = async (id) => {
   return await RFQ.findByPk(id, {
     include: [{ model: DeliverySchedule, as: "deliverySchedules" }],
   });
+};
+
+export const addSuppliersToRFQ = async (rfqId: number, supplierIds: number[]) => {
+  try {
+    const supplierRecords = supplierIds.map((supplierId) => ({
+      rfqId,
+      supplierId,
+    }));
+
+    const createdSuppliers = await RFQSupplier.bulkCreate(supplierRecords);
+
+    return createdSuppliers;
+  } catch (error) {
+    throw new Error(`Error adding suppliers: ${error.message}`);
+  }
 };
 

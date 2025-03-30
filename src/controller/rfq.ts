@@ -1,4 +1,4 @@
-import { createRFQDB, getRFQsDB, getRFQByIdDB } from "../services/rfqService";
+import { createRFQDB, getRFQsDB, getRFQByIdDB, addSuppliersToRFQ } from "../services/rfqService";
 
 export const createRFQ = async (req, res) => {
   try {
@@ -108,6 +108,34 @@ export const getRFQById = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Error fetching RFQ",
+      error: error.message,
+    });
+  }
+};
+
+export const addSuppliers = async (req, res) => {
+  try {
+    const { supplierIds , rfqId} = req.body;
+    
+
+    if (!Array.isArray(supplierIds) || supplierIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "supplierIds must be an array of supplier IDs.",
+      });
+    }
+
+    const suppliers = await addSuppliersToRFQ(parseInt(rfqId, 10), supplierIds);
+
+    return res.status(201).json({
+      success: true,
+      message: "Suppliers added successfully.",
+      data: suppliers,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error adding suppliers.",
       error: error.message,
     });
   }
