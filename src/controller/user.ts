@@ -18,7 +18,7 @@ export const signup = async (req, res) => {
   
       const existingUser = await findUserInDB({ email: email });
       if (existingUser) {
-        return res.status(400).json({ message: "Email already exists" });
+        return res.status(400).json({ success: false, message: "Email already exists" });
       }
   
       // Create new user
@@ -33,22 +33,26 @@ export const signup = async (req, res) => {
   
       res
         .status(201)
-        .json({ message: "User created successfully", token, user: newUser });
+        .json({ success: true, message: "User created successfully", token, user: newUser });
     } catch (error) {
-      res.status(500).json({ message: "Error creating user", error });
+      res.status(500).json({success: false, message: "Error creating user", error });
     }
   };
 
   export const login = async (req , res) => {
     try {
-      const { email, password } = req.body;
+      const { email, password,role } = req.body;
       console.log("Login attempt:", email);
   
       const user = await User.findOne({ where: { email } });
+      if(role!=user.role){
+        return res.status(400).json({ success: false, message: "Role is not allowed" });
+
+      }
   
       if (!user) {
         console.log("User not found");
-        return res.status(400).json({ message: "Invalid email or password" });
+        return res.status(400).json({ success: false, message: "Invalid email or password" });
       }
   
       console.log("Stored password hash:", user.passwordHash);
@@ -58,7 +62,7 @@ export const signup = async (req, res) => {
       console.log("Password match result:", isMatch);
   
       if (!isMatch) {
-        return res.status(400).json({ message: "Invalid email or password" });
+        return res.status(400).json({success: false, message: "Invalid email or password" });
       }
   
       const token = jwt.sign(
@@ -67,10 +71,10 @@ export const signup = async (req, res) => {
         { expiresIn: "24h" }
       );
   
-      res.status(200).json({ message: "Login successful", token, user });
+      res.status(200).json({success: true, message: "Login successful", token, user });
     } catch (error) {
       console.error("Login error:", error);
-      res.status(500).json({ message: "Error logging in", error });
+      res.status(500).json({ success: false, message: "Error logging in", error });
     }
   };
   
@@ -80,19 +84,17 @@ export const signup = async (req, res) => {
       const { userId } = req.query;  
   
       if (userId) {
-        if (role !== "Admin") {
-          return res.status(403).json({ message: "Only admins are allowed to access other users' profiles" });
-        }
+      
         const user = await findUserByPkInDB(userId); 
         return res.status(200).json({ user });
       } 
   
       const user = await findUserByPkInDB(id);
-      return res.status(200).json({ user });
+      return res.status(200).json({ success: true, message:"Profile fetched successfully", user });
   
     } catch (error) {
-      console.error(error); // Log the error for debugging
-      return res.status(500).json({ message: "Error fetching user profile", error });
+      console.error(error); 
+      return res.status(500).json({ success: false, message: "Error fetching user profile", error });
     }
   };
   

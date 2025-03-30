@@ -3,11 +3,13 @@ const cors = require('cors');
 import sequelize from "./src/database/models/db";
 const app = express();
 import userRoutes from "./src/routes/userRoutes";
+import rfqRoutes from "./src/routes/rfqRoutes";
 
 app.use(cors());
 
 app.use(express.json());
 app.use("/api/users", userRoutes);
+app.use("/api/rfq", rfqRoutes);
 
 
 
@@ -16,7 +18,7 @@ app.use(cors({
     methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: 'Content-Type,Authorization'
   }));
-  const PORT = 5000;
+  const PORT = 8000;
   
   const startServer = async () => {
     try {
