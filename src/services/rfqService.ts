@@ -144,3 +144,37 @@ export const getRFQDetails = async (rfqId: number) => {
   }
 };
 
+export const getMyRFQsService = async (
+  buyerId,
+  page,
+  limit,
+  search = ""
+) =>{
+  try{
+
+    const offset = (page - 1) * limit;
+    const { count, rows } = await RFQ.findAndCountAll({
+      where: {
+        buyerId,
+      },
+      order: [["createdAt", "DESC"]],
+      limit,
+      offset,
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    return {
+      rfqs: rows,
+      pagination: {
+        totalItems: count,
+        totalPages,
+        currentPage: page,
+      },
+    };
+
+  }catch(error){
+    throw new Error(`Error adding suppliers: ${error.message}`);
+  }
+}
+

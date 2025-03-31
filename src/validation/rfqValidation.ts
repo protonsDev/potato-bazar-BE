@@ -1,7 +1,6 @@
 import Joi from "joi";
 
 export const rfqSchema = Joi.object({
-  buyerId: Joi.number().integer().required().label("Buyer ID"),
   title: Joi.string().min(3).max(255).required().label("Title"),
   quantity: Joi.number().positive().precision(2).required().label("Quantity"),
   unitType: Joi.string()

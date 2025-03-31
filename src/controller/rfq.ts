@@ -1,4 +1,4 @@
-import { createRFQDB, getRFQsDB, getRFQByIdDB, addSuppliersToRFQ , getSupplierRFQsService, getRFQDetails} from "../services/rfqService";
+import { createRFQDB, getRFQsDB, getRFQByIdDB, addSuppliersToRFQ , getSupplierRFQsService, getRFQDetails, getMyRFQsService} from "../services/rfqService";
 
 export const createRFQ = async (req, res) => {
   try {
@@ -192,4 +192,27 @@ export const getSupplierRFQsDetails = async (req, res) => {
     });
   }
 };
+
+
+export const getMyRFQsController = async (req, res) => {
+  try{
+    const buyerId = Number(req.user.id);
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const search = (req.query.search as string) || "";
+
+    const data = await getMyRFQsService(buyerId,page,limit,search);
+    return res.json({
+      success: true,
+      data: data.rfqs,
+      pagination: data.pagination,
+    });
+
+  }catch(error){
+    return res.status(500).json({
+      success: false,
+      message: "Server error fetching  RFQs.",
+    });
+  }
+}
 
