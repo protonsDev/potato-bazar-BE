@@ -1,4 +1,4 @@
-import { createRFQDB, getRFQsDB, getRFQByIdDB, addSuppliersToRFQ , getSupplierRFQsService, getRFQDetails, getMyRFQsService, updateRFQDB, updateDeliverySchedulesDB} from "../services/rfqService";
+import { createRFQDB, getRFQsDB, getRFQByIdDB, addSuppliersToRFQ , getSupplierRFQsService, getRFQDetails, getMyRFQsService, updateRFQDB, updateDeliverySchedulesDB, updateSuppliersForRFQ} from "../services/rfqService";
 
 export const createRFQ = async (req, res) => {
   try {
@@ -295,6 +295,33 @@ export const updateDeliverySchedules = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Error updating delivery schedules",
+      error: error.message,
+    });
+  }
+};
+
+export const updateSuppliers = async (req, res) => {
+  try {
+    const { supplierIds, rfqId } = req.body;
+
+    if (!Array.isArray(supplierIds) || supplierIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "supplierIds must be an array of supplier IDs.",
+      });
+    }
+
+    const updatedSuppliers = await updateSuppliersForRFQ(parseInt(rfqId, 10), supplierIds);
+
+    return res.status(200).json({
+      success: true,
+      message: "Suppliers updated successfully.",
+      data: updatedSuppliers,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error updating suppliers.",
       error: error.message,
     });
   }

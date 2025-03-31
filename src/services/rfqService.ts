@@ -241,4 +241,22 @@ export const updateDeliverySchedulesDB = async (deliverySchedules) => {
 };
 
 
+export const updateSuppliersForRFQ = async (rfqId, supplierIds) => {
+  try {
+    await RFQSupplier.destroy({ where: { rfqId } });
+
+    const supplierRecords = supplierIds.map((supplierId) => ({
+      rfqId,
+      supplierId,
+    }));
+
+    const updatedSuppliers = await RFQSupplier.bulkCreate(supplierRecords);
+
+    return updatedSuppliers;
+  } catch (error) {
+    throw new Error(`Error updating suppliers: ${error.message}`);
+  }
+};
+
+
 
