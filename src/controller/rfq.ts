@@ -1,4 +1,4 @@
-import { createRFQDB, getRFQsDB, getRFQByIdDB, addSuppliersToRFQ , getSupplierRFQsService, getRFQDetails, getMyRFQsService} from "../services/rfqService";
+import { createRFQDB, getRFQsDB, getRFQByIdDB, addSuppliersToRFQ , getSupplierRFQsService, getRFQDetails, getMyRFQsService, updateRFQDB, updateDeliverySchedulesDB} from "../services/rfqService";
 
 export const createRFQ = async (req, res) => {
   try {
@@ -219,4 +219,84 @@ export const getMyRFQsController = async (req, res) => {
     });
   }
 }
+
+export const updateRFQ = async (req, res) => {
+  try {
+    const { rfqId } = req.query;
+
+    if (req.user.role !== "buyer") {
+      return res.status(403).json({
+        success: false,
+        message: "Only buyers are allowed to update RFQs",
+      });
+    }
+
+    const updateData = {
+      title: req.body.title,
+      quantity: req.body.quantity,
+      unitType: req.body.unitType,
+      targetPrice: req.body.targetPrice,
+      potatoVariety: req.body.potatoVariety,
+      grade: req.body.grade,
+      size: req.body.size,
+      packagingType: req.body.packagingType,
+      quantityPerBag: req.body.quantityPerBag,
+      paymentTerms: req.body.paymentTerms,
+      customPaymentTerms: req.body.customPaymentTerms,
+      remarks: req.body.remarks,
+      submissionDeadline: req.body.submissionDeadline,
+      status: req.body.status,
+    };
+
+    const updatedRFQ = await updateRFQDB(rfqId, updateData);
+
+    if (!updatedRFQ) {
+      console.log(updatedRFQ)
+      return res.status(404).json({
+        success: false,
+        message: "RFQ not found or update failed",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: updatedRFQ,
+      message: "RFQ updated successfully",
+    });
+  } catch (error) {
+    console.log("error",error)
+    return res.status(500).json({
+      success: false,
+      message: "Error updating RFQ",
+      error: error.message,
+    });
+  }
+};
+
+export const updateDeliverySchedules = async (req, res) => {
+  try {
+    const { deliverySchedules } = req.body;
+
+    if (!deliverySchedules || !Array.isArray(deliverySchedules)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid request. deliverySchedules must be an array.",
+      });
+    }
+
+    const updatedSchedules = await updateDeliverySchedulesDB(deliverySchedules);
+
+    return res.status(200).json({
+      success: true,
+      data: updatedSchedules,
+      message: "Delivery schedules updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error updating delivery schedules",
+      error: error.message,
+    });
+  }
+};
 

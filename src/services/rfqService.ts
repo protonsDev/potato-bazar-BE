@@ -194,4 +194,51 @@ export const getMyRFQsService = async (buyerId, page, limit, search = "") => {
   }
 };
 
+export const updateRFQDB = async (rfqId, updateData) => {
+  try {
+    console.log("id",rfqId)
+    const rfq = await RFQ.findByPk(rfqId);
+    if (!rfq) return null;
+
+    const updatedFields = {};
+    Object.keys(updateData).forEach((key) => {
+      if (updateData[key] !== undefined) {
+        updatedFields[key] = updateData[key];
+      }
+    });
+
+    await rfq.update(updatedFields);
+
+    return rfq;
+  } catch (error) {
+    console.log(error)
+    throw error;
+  }
+};
+
+
+export const updateDeliverySchedulesDB = async (deliverySchedules) => {
+  try {
+    const updatedSchedules = [];
+
+    for (const schedule of deliverySchedules) {
+      const { id, ...updateData } = schedule;
+
+      const existingSchedule = await DeliverySchedule.findByPk(id);
+
+      if (!existingSchedule) {
+        throw new Error(`Delivery Schedule with ID ${id} not found`);
+      }
+
+      await existingSchedule.update(updateData);
+      updatedSchedules.push(existingSchedule);
+    }
+
+    return updatedSchedules;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
 
