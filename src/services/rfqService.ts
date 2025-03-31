@@ -4,6 +4,7 @@ import sequelize from "../database/models/db";
 import RFQSupplier from "../database/models/rfqSupplier";
 import { Op } from "sequelize";
 import User from "../database/models/user";
+import Quote from "../database/models/quote";
 
 
 export const createRFQDB = async (rfqData) => {
@@ -144,37 +145,53 @@ export const getRFQDetails = async (rfqId: number) => {
   }
 };
 
-export const getMyRFQsService = async (
-  buyerId,
-  page,
-  limit,
-  search = ""
-) =>{
-  try{
-
+export const getMyRFQsService = async (buyerId, page, limit, search = "") => {
+  try {
     const offset = (page - 1) * limit;
+
     const { count, rows } = await RFQ.findAndCountAll({
-      where: {
-        buyerId,
-      },
+      where: { buyerId },
       order: [["createdAt", "DESC"]],
       limit,
       offset,
     });
 
+    // Count active RFQs
+    const activeRFQsCount = await RFQ.count({
+      where: { buyerId, status: "active" },
+    });
+
+    // Count total quotes received
+    const totalQuotesReceived = await Quote.count({
+      include: [
+        {
+          model: RFQ,
+          as: "rfq",
+          where: { buyerId },
+        },
+      ],
+    });
+
+    // Calculate average quotes per RFQ
+    const averageQuotesPerRFQ = count > 0 ? (totalQuotesReceived / count).toFixed(1) : 0;
+
     const totalPages = Math.ceil(count / limit);
 
     return {
       rfqs: rows,
+      totalRFQs: count,
+      activeRFQs: activeRFQsCount,
+      totalQuotesReceived,
+      averageQuotesPerRFQ,
       pagination: {
         totalItems: count,
         totalPages,
         currentPage: page,
       },
     };
-
-  }catch(error){
-    throw new Error(`Error adding suppliers: ${error.message}`);
+  } catch (error) {
+    throw new Error(`Error fetching RFQs: ${error.message}`);
   }
-}
+};
+
 

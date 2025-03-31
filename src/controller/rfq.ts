@@ -206,6 +206,10 @@ export const getMyRFQsController = async (req, res) => {
       success: true,
       data: data.rfqs,
       pagination: data.pagination,
+      totalRFQs: data.totalRFQs,
+      activeRFQs: data.activeRFQs,
+      totalQuotesReceived:data.totalQuotesReceived,
+      averageQuotesPerRFQ:data.averageQuotesPerRFQ
     });
 
   }catch(error){
