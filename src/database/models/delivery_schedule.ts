@@ -39,11 +39,7 @@ DeliverySchedule.init(
     deliveryDeadline: {
       type: DataTypes.DATE,
       allowNull: false,
-    },
-    pricePerUnit: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: true,
-    },
+    }
   },
   {
     sequelize,
