@@ -16,6 +16,9 @@ class Quote extends Model {
   public certifications?: string[];
   public sampleAvailable!: boolean;
   public status!: "draft" | "submitted";
+  public totalCost!: number;
+  public negotiatedPrice?: number;
+  public buyerStatus?:string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -79,6 +82,22 @@ Quote.init(
       type: DataTypes.ENUM("draft", "submitted"),
       allowNull: false,
       defaultValue: "draft",
+    },
+    totalCost: {
+      type: DataTypes.DECIMAL(10, 2),  
+      allowNull: false,
+      defaultValue: 0,    
+      field: "totalCost"            
+    },
+    negotiatedPrice: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      field: "negotiated_price",
+    },
+    buyerStatus: {
+      type: DataTypes.ENUM("accepted", "rejected"),
+      allowNull: true,
+      field: "buyer_status",
     },
   },
   {

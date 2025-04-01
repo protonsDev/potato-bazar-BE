@@ -1,4 +1,4 @@
-import { createQuote, createDeliveryScheduleQuotes } from "../services/quoteService";
+import { createQuote, createDeliveryScheduleQuotes , updateQuoteStatus} from "../services/quoteService";
 
 export const submitQuote = async (req, res) => {
     try {
@@ -20,5 +20,26 @@ export const submitQuote = async (req, res) => {
     } catch (err: any) {
       console.error("Error in submitDeliveryScheduleQuotes:", err);
       return res.status(500).json({ success: false, message: err.message });
+    }
+  };
+
+  export const modifyQuoteStatus = async (req, res) => {
+    try {
+      const { quoteId, status } = req.body;
+  
+      if (!["accepted", "rejected"].includes(status)) {
+        return res.status(400).json({ success: false, message: "Invalid status" });
+      }
+  
+      const updatedQuote = await updateQuoteStatus(quoteId, status);
+  
+      if (!updatedQuote) {
+        return res.status(400).json({ success: false, message: "Another quote has already been accepted for this RFQ" });
+      }
+  
+      res.status(200).json({ success: true, message: `Quote ${status} successfully`, data: updatedQuote });
+    } catch (err) {
+      console.error("Error updating quote status:", err);
+      res.status(500).json({ success: false, message: "Server error" });
     }
   };

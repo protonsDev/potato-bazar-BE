@@ -9,8 +9,8 @@ export const quoteSchema = Joi.object({
     quantityPerPack: Joi.number().required(),
     paymentTerms: Joi.string().required(),
     additionalRemarks: Joi.string().allow(""),
-    termsAndConditions: Joi.string().allow("")
-});
+    termsAndConditions: Joi.string().allow(""),
+    totalCost: Joi.number().precision(2).min(0).required()});
 
 export const deliveryScheduleQuoteSchema = Joi.object({
     quoteId: Joi.number().integer().required(),

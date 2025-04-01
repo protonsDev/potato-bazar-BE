@@ -25,3 +25,28 @@ export const createDeliveryScheduleQuotes = async (quoteId: number,
     throw error;
   }
 };
+
+export const updateQuoteStatus = async (quoteId: number, status: "accepted" | "rejected") => {
+  try {
+    const quote = await Quote.findByPk(quoteId);
+    if (!quote) {
+      throw new Error("Quote not found");
+    }
+
+    if (status === "accepted") {
+      const existingAcceptedQuote = await Quote.findOne({
+        where: { rfqId: quote.rfqId, buyerStatus: "accepted" },
+      });
+
+      if (existingAcceptedQuote) {
+        return null; 
+      }
+      
+      return await quote.update({ buyerStatus: "accepted", negotiatedPrice: quote.totalCost });
+    } else {
+      return await quote.update({ buyerStatus: "rejected" });
+    }
+  } catch (error) {
+    throw error;
+  }
+};
