@@ -123,9 +123,10 @@ export const getSupplierRFQsService = async (
 
 
 
+
 export const getRFQDetails = async (rfqId: number) => {
   try {
-   return await RFQ.findByPk(rfqId, {
+    const rfq = await RFQ.findByPk(rfqId, {
       include: [
         {
           model: User,
@@ -138,12 +139,24 @@ export const getRFQDetails = async (rfqId: number) => {
       ],
     });
 
+    if (!rfq) {
+      return { error: true, status: 404, message: "RFQ not found" };
+    }
 
+    const existingQuote = await Quote.findOne({
+      where: { rfqId },
+    });
+
+    return {
+      ...rfq.toJSON(),
+      isEditable: !existingQuote, 
+    };
   } catch (err) {
     console.error("Error in getRFQDetails:", err);
     return { error: true, status: 500, message: "Server error" };
   }
 };
+
 
 export const getMyRFQsService = async (buyerId, page, limit, search = "") => {
   try {
