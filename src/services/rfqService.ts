@@ -124,6 +124,7 @@ export const getSupplierRFQsService = async (
 
 
 
+
 export const getRFQDetails = async (rfqId: number) => {
   try {
     const rfq = await RFQ.findByPk(rfqId, {
@@ -135,6 +136,18 @@ export const getRFQDetails = async (rfqId: number) => {
         {
           model: DeliverySchedule,
           as: "deliverySchedules",
+        },
+        {
+          model: RFQSupplier,
+          as: "suppliers",
+          attributes:['supplierId'],
+          include: [
+            {
+              model: User,
+              as: "supplier",
+              attributes: ["id", "name", "email"], 
+            },
+          ],
         },
       ],
     });
@@ -149,13 +162,14 @@ export const getRFQDetails = async (rfqId: number) => {
 
     return {
       ...rfq.toJSON(),
-      isEditable: !existingQuote, 
+      isEditable: !existingQuote,
     };
   } catch (err) {
     console.error("Error in getRFQDetails:", err);
     return { error: true, status: 500, message: "Server error" };
   }
 };
+
 
 
 export const getMyRFQsService = async (buyerId, page, limit, search = "") => {

@@ -69,5 +69,7 @@ RFQSupplier.belongsTo(User, {
   foreignKey: "supplier_id",
   as: "supplier",
 });
+RFQ.hasMany(RFQSupplier, { foreignKey: "rfqId", as: "suppliers" });
+
 
 export default RFQSupplier;
