@@ -19,6 +19,9 @@ class RFQ extends Model {
   public customPaymentTerms?: string;
   public remarks?: string;
   public status!: "draft" | "active" | "closed" | "awarded";
+  public category?: string; 
+  public isTpod?: boolean;  
+  public isUc?: boolean;    
   public submissionDeadline?: Date;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -95,6 +98,21 @@ RFQ.init(
     submissionDeadline: {
       type: DataTypes.DATE,
       allowNull: true,
+    },
+    category: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    isTpod: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      field:"isTpod"
+    },
+    isUc: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      field:"isUc"
+
     },
   },
   {

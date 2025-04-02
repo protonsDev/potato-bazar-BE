@@ -17,7 +17,10 @@ export const createRFQ = async (req, res) => {
       remarks,
       submissionDeadline,
       deliverySchedules,
-      status
+      status,
+      category,
+      isTpod,
+      isUc
     } = req.body;
     if (req.user.role != "buyer") {
       return res
@@ -44,7 +47,10 @@ export const createRFQ = async (req, res) => {
       remarks,
       submissionDeadline,
       deliverySchedules,
-      status
+      status,
+      category,
+      isTpod,
+      isUc
     });
 
     return res.status(201).json({

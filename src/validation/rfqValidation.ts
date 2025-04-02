@@ -41,6 +41,9 @@ export const rfqSchema = Joi.object({
     .min(1)
     .required()
     .label("Delivery Schedules"),
+  category: Joi.string().allow(null, "").label("Category"),
+  isTpod: Joi.boolean().allow(null).label("Is TPOD"),
+  isUc: Joi.boolean().allow(null).label("Is UC"),
 });
 
 
