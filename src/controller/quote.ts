@@ -1,4 +1,4 @@
-import { createQuote, createDeliveryScheduleQuotes , updateQuoteStatus} from "../services/quoteService";
+import { createQuote, createDeliveryScheduleQuotes , updateQuoteStatus, getQuoteList} from "../services/quoteService";
 
 export const submitQuote = async (req, res) => {
     try {
@@ -41,5 +41,30 @@ export const submitQuote = async (req, res) => {
     } catch (err) {
       console.error("Error updating quote status:", err);
       res.status(500).json({ success: false, message: "Server error" });
+    }
+  };
+
+  export const getMyQoutes = async (req, res) => {
+    try {
+      const { page = 1, limit = 10 } = req.query;
+      const supplierId = req.user.id;
+  
+      const parsedPage = parseInt(page, 10);
+      const parsedLimit = parseInt(limit, 10);
+  
+      const quote = await getQuoteList(supplierId,parsedPage, parsedLimit);
+  
+      return res.status(200).json({
+        success: true,
+        data: quote.quote,
+       pagination: quote.pagination,
+        message: "Quotes retrieved successfully",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Error fetching quote",
+        error: error.message,
+      });
     }
   };
