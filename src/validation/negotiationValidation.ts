@@ -6,6 +6,8 @@ export const negotiationSchema = Joi.object({
   proposedCost: Joi.number().precision(2).positive().required(), 
   proposedBy: Joi.string().required().valid('buyer','seller'),
   status:Joi.string().required().valid("pending"),
+  message: Joi.string().required(),
+
 });
 
 

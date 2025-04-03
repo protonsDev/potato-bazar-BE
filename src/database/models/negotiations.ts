@@ -10,6 +10,7 @@ class Negotiation extends Model {
   public proposedBy!: "buyer" | "supplier";
   public proposedCost!: number;
   public status!: "pending" | "accepted" | "rejected";
+  public message!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -56,6 +57,11 @@ Negotiation.init(
       allowNull: false,
       defaultValue: "pending",
     },
+    message:{
+      type: DataTypes.STRING,
+      allowNull: true,
+    }
+
   },
   {
     sequelize,
