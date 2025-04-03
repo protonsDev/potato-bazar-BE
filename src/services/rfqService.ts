@@ -75,29 +75,18 @@ export const addSuppliersToRFQ = async (
   }
 };
 
-export const getSupplierRFQsService = async (
-  supplierId,
-  page,
-  limit,
-  search = ""
-) => {
+export const getSupplierRFQsService = async (supplierId, page, limit, search = "") => {
   try {
     const offset = (page - 1) * limit;
 
     const { count, rows } = await RFQSupplier.findAndCountAll({
-      where: {
-        supplierId,
-      },
+      where: { supplierId },
       include: [
         {
           model: RFQ,
           as: "rfq",
           where: search
-            ? {
-                title: {
-                  [Op.iLike]: `%${search}%`,
-                },
-              }
+            ? { title: { [Op.iLike]: `%${search}%` } }
             : undefined,
         },
       ],
@@ -105,11 +94,30 @@ export const getSupplierRFQsService = async (
       limit,
       offset,
     });
+//@ts-ignore
+    const rfqIds = rows.map((rfqSupplier) => rfqSupplier.rfq.id);
+
+    const submittedQuotes = await Quote.findAll({
+      where: {
+        rfqId: { [Op.in]: rfqIds },
+        supplierId,
+        status: "submitted",
+      },
+      attributes: ["rfqId"],
+    });
+
+    const submittedRfqIds = new Set(submittedQuotes.map((quote) => quote.rfqId));
+
+    const rfqsWithQuotes = rows.map((rfqSupplier) => ({
+      ...rfqSupplier.toJSON(),
+      //@ts-ignore
+      isQuote: submittedRfqIds.has(rfqSupplier.rfq.id),
+    }));
 
     const totalPages = Math.ceil(count / limit);
 
     return {
-      rfqs: rows,
+      rfqs: rfqsWithQuotes,
       pagination: {
         totalItems: count,
         totalPages,
@@ -117,7 +125,7 @@ export const getSupplierRFQsService = async (
       },
     };
   } catch (error) {
-    throw new Error(`Error adding suppliers: ${error.message}`);
+    throw new Error(`Error fetching supplier RFQs: ${error.message}`);
   }
 };
 
