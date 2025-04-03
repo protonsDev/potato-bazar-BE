@@ -304,5 +304,56 @@ export const updateSuppliersForRFQ = async (rfqId, supplierIds) => {
   }
 };
 
+export const getRFQDetailsV2 = async (rfqId: number) => {
+  try {
+    const rfq = await RFQ.findByPk(rfqId, {
+      include: [
+        {
+          model: User,
+          as: "buyer",
+        },
+        {
+          model: DeliverySchedule,
+          as: "deliverySchedules",
+        },
+        {
+          model: RFQSupplier,
+          as: "suppliers",
+          attributes: ["supplierId"],
+          include: [
+            {
+              model: User,
+              as: "supplier",
+              attributes: ["id", "name", "email"],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!rfq) {
+      return { error: true, status: 404, message: "RFQ not found" };
+    }
+
+    let quoteId: number | null = null;
+      const existingQuote = await Quote.findOne({
+        where: { rfqId, status: "submitted" },
+        attributes: ["id"],
+      });
+
+      quoteId = existingQuote ? existingQuote.id : null;
+    
+
+    return {
+      ...rfq.toJSON(),
+      isQuote: !!quoteId, 
+      quoteId, 
+    };
+  } catch (err) {
+    console.error("Error in getRFQDetails:", err);
+    return { error: true, status: 500, message: "Server error" };
+  }
+};
+
 
 

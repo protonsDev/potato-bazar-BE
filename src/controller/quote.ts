@@ -1,4 +1,4 @@
-import { createQuote, createDeliveryScheduleQuotes , updateQuoteStatus, getQuoteList, getQoutesDetailsById} from "../services/quoteService";
+import { createQuote, createDeliveryScheduleQuotes , updateQuoteStatus, getQoutesDetailsById, getQuoteListDb, getQuotesListByRfqDB} from "../services/quoteService";
 
 export const submitQuote = async (req, res) => {
     try {
@@ -52,7 +52,7 @@ export const submitQuote = async (req, res) => {
       const parsedPage = parseInt(page, 10);
       const parsedLimit = parseInt(limit, 10);
   
-      const quote = await getQuoteList(supplierId,parsedPage, parsedLimit);
+      const quote = await getQuoteListDb(supplierId,parsedPage, parsedLimit);
   
       return res.status(200).json({
         success: true,
@@ -86,3 +86,29 @@ export const submitQuote = async (req, res) => {
       });
     }
   }
+
+  export const getQuoteListByRfq = async (req, res) => {
+    try{
+      const rfqId = req.query.rfqId;
+      const { page = 1, limit = 10 } = req.query;
+      const parsedPage = parseInt(page, 10);
+      const parsedLimit = parseInt(limit, 10);
+      const quote = await getQuotesListByRfqDB(rfqId,parsedPage, parsedLimit);
+  
+      return res.status(200).json({
+        success: true,
+        data: quote.quote,
+       pagination: quote.pagination,
+        message: "Quotes retrieved successfully",
+      });
+
+    }catch(error){
+      return res.status(500).json({
+        success: false,
+        message: "Error fetching quote",
+        error: error.message,
+      });
+    }
+  }
+
+  

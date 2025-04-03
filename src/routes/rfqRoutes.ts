@@ -14,6 +14,7 @@ router.get("/my-details",authMiddleware ,getMyRFQsController);
 router.put("/",authMiddleware ,updateRFQ);
 router.put("/update-delivery-schedules",authMiddleware ,updateDeliverySchedules);
 router.put("/update-suppliers",authMiddleware ,updateSuppliers);
+router.get("/rfqs-buyer-details",authMiddleware ,getSupplierRFQsDetails);
 
 
 

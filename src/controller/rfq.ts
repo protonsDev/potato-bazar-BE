@@ -334,3 +334,26 @@ export const updateSuppliers = async (req, res) => {
   }
 };
 
+export const getSupplierRFQsDetailsBuyerSide = async (req, res) => {
+  try {
+     const rfqId = req.query.rfqId;
+
+    if (isNaN(rfqId)) {
+      return res.status(400).json({ success: false, message: "Invalid rfqId." });
+    }
+
+    const result = await getRFQDetails(rfqId);
+
+    return res.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error fetching  RFQs:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error fetching  RFQs.",
+    });
+  }
+};
+

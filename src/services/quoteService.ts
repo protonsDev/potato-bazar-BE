@@ -52,7 +52,7 @@ export const updateQuoteStatus = async (quoteId: number, status: "accepted" | "r
   }
 };
 
-export const getQuoteList = async (supplierId, page, limit) => {
+export const getQuoteListDb = async (supplierId, page, limit) => {
   try {
     const offset = (page - 1) * limit;
 
@@ -91,3 +91,29 @@ try{
   throw err;
 }
 }
+
+export const getQuotesListByRfqDB = async (rfqId,page, limit) => {
+  try{
+    const offset = (page - 1) * limit;
+    const { count, rows } = await Quote.findAndCountAll({
+      where: { rfqId:rfqId },
+      order: [["createdAt", "DESC"]],
+      limit,
+      offset,
+    });
+    const totalPages = Math.ceil(count / limit);
+    return {
+      quote: rows,
+      totalRFQs: count,
+      pagination: {
+        totalItems: count,
+        totalPages,
+        currentPage: page,
+      },
+    };
+
+  }catch(error){
+    throw error;
+  }
+}
+
