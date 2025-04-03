@@ -1,4 +1,4 @@
-import { createQuote, createDeliveryScheduleQuotes , updateQuoteStatus, getQuoteList} from "../services/quoteService";
+import { createQuote, createDeliveryScheduleQuotes , updateQuoteStatus, getQuoteList, getQoutesDetailsById} from "../services/quoteService";
 
 export const submitQuote = async (req, res) => {
     try {
@@ -68,3 +68,21 @@ export const submitQuote = async (req, res) => {
       });
     }
   };
+
+  export const getQoutesDetails = async (req, res) => {
+    try{
+      const quoteId= req.query.quoteId;
+      const data = await getQoutesDetailsById(quoteId);
+      return res.status(200).json({
+        success: true,
+        data: data,
+        message: "Quotes retrieved successfully",
+      });
+    }catch(error){
+      return res.status(500).json({
+        success: false,
+        message: "Error fetching quote",
+        error: error.message,
+      });
+    }
+  }
