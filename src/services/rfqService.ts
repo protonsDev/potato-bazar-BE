@@ -94,7 +94,8 @@ export const getSupplierRFQsService = async (supplierId, page, limit, search = "
       limit,
       offset,
     });
-//@ts-ignore
+
+    //@ts-ignore
     const rfqIds = rows.map((rfqSupplier) => rfqSupplier.rfq.id);
 
     const submittedQuotes = await Quote.findAll({
@@ -103,16 +104,22 @@ export const getSupplierRFQsService = async (supplierId, page, limit, search = "
         supplierId,
         status: "submitted",
       },
-      attributes: ["rfqId"],
+      attributes: ["rfqId", "id"], // Fetch quoteId
     });
 
-    const submittedRfqIds = new Set(submittedQuotes.map((quote) => quote.rfqId));
+    const quoteMap = new Map(
+      submittedQuotes.map((quote) => [quote.rfqId, quote.id])
+    );
 
-    const rfqsWithQuotes = rows.map((rfqSupplier) => ({
-      ...rfqSupplier.toJSON(),
-      //@ts-ignore
-      isQuote: submittedRfqIds.has(rfqSupplier.rfq.id),
-    }));
+    const rfqsWithQuotes = rows.map((rfqSupplier) => {
+              //@ts-ignore
+      const quoteId = quoteMap.get(rfqSupplier.rfq.id) || null;
+      return {
+        ...rfqSupplier.toJSON(),
+        isQuote: !!quoteId, // true if quote exists
+        quoteId, // Provide quoteId if available
+      };
+    });
 
     const totalPages = Math.ceil(count / limit);
 
@@ -128,10 +135,6 @@ export const getSupplierRFQsService = async (supplierId, page, limit, search = "
     throw new Error(`Error fetching supplier RFQs: ${error.message}`);
   }
 };
-
-
-
-
 
 export const getRFQDetails = async (rfqId: number) => {
   try {
