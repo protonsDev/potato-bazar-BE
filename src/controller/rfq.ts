@@ -179,12 +179,13 @@ export const getSupplierRFQsController = async (req, res) => {
 export const getSupplierRFQsDetails = async (req, res) => {
   try {
      const rfqId = req.query.rfqId;
+     const userId = req.user.id;
 
     if (isNaN(rfqId)) {
       return res.status(400).json({ success: false, message: "Invalid rfqId." });
     }
 
-    const result = await getRFQDetails(rfqId);
+    const result = await getRFQDetails(rfqId,userId);
 
     return res.json({
       success: true,

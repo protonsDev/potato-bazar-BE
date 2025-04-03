@@ -136,7 +136,7 @@ export const getSupplierRFQsService = async (supplierId, page, limit, search = "
   }
 };
 
-export const getRFQDetails = async (rfqId: number) => {
+export const getRFQDetails = async (rfqId: number, supplierId?: number) => {
   try {
     const rfq = await RFQ.findByPk(rfqId, {
       include: [
@@ -151,12 +151,12 @@ export const getRFQDetails = async (rfqId: number) => {
         {
           model: RFQSupplier,
           as: "suppliers",
-          attributes:['supplierId'],
+          attributes: ["supplierId"],
           include: [
             {
               model: User,
               as: "supplier",
-              attributes: ["id", "name", "email"], 
+              attributes: ["id", "name", "email"],
             },
           ],
         },
@@ -167,19 +167,27 @@ export const getRFQDetails = async (rfqId: number) => {
       return { error: true, status: 404, message: "RFQ not found" };
     }
 
-    const existingQuote = await Quote.findOne({
-      where: { rfqId },
-    });
+    let quoteId: number | null = null;
+    if (supplierId) {
+      const existingQuote = await Quote.findOne({
+        where: { rfqId, supplierId, status: "submitted" },
+        attributes: ["id"],
+      });
+
+      quoteId = existingQuote ? existingQuote.id : null;
+    }
 
     return {
       ...rfq.toJSON(),
-      isEditable: !existingQuote,
+      isQuote: !!quoteId, 
+      quoteId, 
     };
   } catch (err) {
     console.error("Error in getRFQDetails:", err);
     return { error: true, status: 500, message: "Server error" };
   }
 };
+
 
 
 
