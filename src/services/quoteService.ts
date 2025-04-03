@@ -1,6 +1,7 @@
 import DeliveryScheduleQuote from "../database/models/delivery_schedule_quote";
 import Quote from "../database/models/quote";
 import RFQ from "../database/models/rfqs";
+import User from "../database/models/user";
 
 export const createQuote = async (data) => {
   try {
@@ -82,10 +83,16 @@ export const getQuoteListDb = async (supplierId, page, limit) => {
 export const getQoutesDetailsById = async (quoteId) => {
 try{
   return await Quote.findByPk(quoteId,{
-    include:{
-      model:RFQ,
-      as: "rfq",
-    }
+    include:[
+      {
+        model:RFQ,
+        as: "rfq",
+      },
+      {
+        model: User,
+        as:"supplier"
+      }
+    ]
   })
 }catch(err){
   throw err;
