@@ -46,5 +46,8 @@ DeliveryScheduleQuote.init(
 
 DeliveryScheduleQuote.belongsTo(Quote, { foreignKey: "quote_id", as: "quote" });
 DeliveryScheduleQuote.belongsTo(DeliverySchedule, { foreignKey: "delivery_schedule_id", as: "deliverySchedule" });
-
+Quote.hasMany(DeliveryScheduleQuote, {
+  foreignKey: "quote_id",
+  as: "deliveryScheduleQuotes",
+});
 export default DeliveryScheduleQuote;

@@ -6,6 +6,7 @@ import userRoutes from "./src/routes/userRoutes";
 import rfqRoutes from "./src/routes/rfqRoutes";
 import quoteRoutes from "./src/routes/quoteRoutes";
 import negotiationRoutes from "./src/routes/negotiationRoutes";
+import deliveryRoutes from "./src/routes/deliveryRoutes";
 
 
 app.use(cors());
@@ -15,6 +16,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/rfq", rfqRoutes);
 app.use("/api/quote", quoteRoutes);
 app.use("/api/negotiation", negotiationRoutes);
+app.use("/api/delivery", deliveryRoutes);
 
 
 
