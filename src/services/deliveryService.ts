@@ -4,6 +4,9 @@ import DeliveryScheduleQuote from "../database/models/delivery_schedule_quote";
 import Dispatch from "../database/models/dispatchDetail";
 import DispatchStatusLog from "../database/models/dispatchStatusLog";
 import Quote from "../database/models/quote";
+import RFQ from "../database/models/rfqs";
+import { Op } from "sequelize";
+
 
 // Dispatch Services
 export const createDispatchService = async (data) => await Dispatch.create(data);
@@ -95,3 +98,47 @@ export const getQuoteDeliverySchedule = async (rfqId,sellerId) =>{
     throw error;
   }
 }
+
+
+export const deliverySchedulePaginatedList = async (sellerId, page = 1, limit = 10, search = "") => {
+  try {
+    const offset = (page - 1) * limit;
+
+    const dispatches = await Dispatch.findAndCountAll({
+      offset,
+      limit,
+      include: [
+        {
+          model: Quote,
+          as: "quote",
+          where: { supplierId: sellerId },
+          include: [
+            {
+              model: RFQ,
+              as: "rfq",
+              where: {
+                title: {
+                  [Op.iLike]: `%${search}%`, 
+                },
+              },
+              required: true,
+            },
+          ],
+        },
+      ],
+    });
+
+    return {
+      data: dispatches.rows,
+      pagination: {
+        total: dispatches.count,
+        page,
+        limit,
+        totalPages: Math.ceil(dispatches.count / limit),
+      },
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+

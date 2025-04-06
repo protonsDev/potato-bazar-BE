@@ -9,7 +9,8 @@ import {
     deleteStatusLogService,
     getQuoteDetails,
     getQuoteWithFullDetails,
-    getQuoteDeliverySchedule
+    getQuoteDeliverySchedule,
+    deliverySchedulePaginatedList
   } from "../services/deliveryService";
   
   // ------------------ DISPATCH CONTROLLERS ------------------ //
@@ -162,3 +163,17 @@ export const getDeliveryScheduleQuoteforRfq = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 }
+
+
+export const supplierDeliveryList = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { page = 1, limit = 10, search = "" } = req.query;
+
+    const data = await deliverySchedulePaginatedList(userId, Number(page), Number(limit), search);
+
+    res.status(200).json({ success: true, ...data });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
