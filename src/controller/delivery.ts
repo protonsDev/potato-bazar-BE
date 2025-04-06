@@ -125,16 +125,16 @@ import {
 // Get Quote + Delivery Schedules + Dispatch + Dispatch Logs
 export const getQuoteAggregateDetails = async (req, res) => {
   try {
-    const { quoteId, dispatchId } = req.query;
+    const { dispatchId } = req.query;
 
-    if (!quoteId) {
+    if (!dispatchId) {
       return res.status(400).json({
         success: false,
-        message: "quoteId is required",
+        message: "dispatchId is required",
       });
     }
 
-    const data = await getQuoteWithFullDetails({ quoteId,dispatchId });
+    const data = await getQuoteWithFullDetails({ dispatchId });
 
     // if (!data || data.length === 0) {
     //   return res.status(404).json({

@@ -41,7 +41,7 @@ export const deleteStatusLogService = async (id) => {
   if (!log) throw new Error("Log not found");
   await log.destroy();
 };
-export const getQuoteWithFullDetails = async ({ quoteId, dispatchId }) => {
+export const getQuoteWithFullDetails = async ({  dispatchId }) => {
   // const quoteData = await Quote.findAll({
   //   where: { id: quoteId },
   //   include: [
