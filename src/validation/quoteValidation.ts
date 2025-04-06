@@ -26,4 +26,6 @@ export const deliveryScheduleQuoteSchema = Joi.object({
       )
       .min(1)
       .required(),
+      totalValue: Joi.number().precision(2).min(0).required(),
+
   });

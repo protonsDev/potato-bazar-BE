@@ -13,8 +13,13 @@ export const createQuote = async (data) => {
 };
 
 export const createDeliveryScheduleQuotes = async (quoteId: number,
-  scheduleQuotes: any) => {
+  scheduleQuotes: any, totalValue:any) => {
   try {
+    await Quote.update(
+      { totalCost: totalValue },  
+      { where: { id: quoteId } } 
+    );
+     
     const quoteRecords = scheduleQuotes.map((item) => ({
       quoteId,
       deliveryScheduleId: item.deliveryScheduleId,
@@ -59,6 +64,16 @@ export const getQuoteListDb = async (supplierId, page, limit) => {
 
     const { count, rows } = await Quote.findAndCountAll({
       where: { supplierId },
+      include:[
+        {
+          model:RFQ,
+          as: "rfq",
+        },
+        {
+          model: User,
+          as:"supplier"
+        }
+      ],
       order: [["createdAt", "DESC"]],
       limit,
       offset,
@@ -104,6 +119,16 @@ export const getQuotesListByRfqDB = async (rfqId,page, limit) => {
     const offset = (page - 1) * limit;
     const { count, rows } = await Quote.findAndCountAll({
       where: { rfqId:rfqId },
+      include:[
+        {
+          model:RFQ,
+          as: "rfq",
+        },
+        {
+          model: User,
+          as:"supplier"
+        }
+      ],
       order: [["createdAt", "DESC"]],
       limit,
       offset,
