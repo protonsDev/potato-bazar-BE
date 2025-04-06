@@ -1,4 +1,4 @@
-import { createRFQDB, getRFQsDB, getRFQByIdDB, addSuppliersToRFQ , getSupplierRFQsService, getRFQDetails, getMyRFQsService, updateRFQDB, updateDeliverySchedulesDB, updateSuppliersForRFQ} from "../services/rfqService";
+import { createRFQDB, getRFQsDB, getRFQByIdDB, addSuppliersToRFQ , getSupplierRFQsService, getRFQDetails, getMyRFQsService, updateRFQDB, updateDeliverySchedulesDB, updateSuppliersForRFQ, getSupplierRFQsServiceV2} from "../services/rfqService";
 
 export const createRFQ = async (req, res) => {
   try {
@@ -353,6 +353,30 @@ export const getSupplierRFQsDetailsBuyerSide = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Server error fetching  RFQs.",
+    });
+  }
+};
+
+export const getSupplierRFQsControllerV2 = async (req, res) => {
+  try {
+    const supplierId = 10;
+    const search = (req.query.search as string) || "";
+
+
+    const result = await getSupplierRFQsServiceV2(
+      supplierId,
+      search,
+    );
+
+    return res.json({
+      success: true,
+      data: result.rfqs,
+    });
+  } catch (error) {
+    console.error("Error fetching supplier RFQs:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error fetching supplier RFQs.",
     });
   }
 };

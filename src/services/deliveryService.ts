@@ -1,3 +1,4 @@
+import { Model } from "sequelize";
 import DeliverySchedule from "../database/models/delivery_schedule";
 import DeliveryScheduleQuote from "../database/models/delivery_schedule_quote";
 import Dispatch from "../database/models/dispatchDetail";
@@ -81,7 +82,13 @@ export const getQuoteDeliverySchedule = async (rfqId,sellerId) =>{
     if (!quote) return [];
     
     return await DeliveryScheduleQuote.findAll({
-      where: { quoteId: quote.id }
+      where: { quoteId: quote.id },
+      include:[
+      {
+        model: DeliverySchedule,
+      as: "deliverySchedule"
+      }
+      ]
     });
     
   }catch(error){
