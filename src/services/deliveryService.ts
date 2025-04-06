@@ -42,34 +42,36 @@ export const deleteStatusLogService = async (id) => {
   await log.destroy();
 };
 export const getQuoteWithFullDetails = async ({ quoteId, dispatchId }) => {
-  const quoteData = await Quote.findAll({
-    where: { id: quoteId },
-    include: [
-      {
-        model: DeliveryScheduleQuote,
-        as: "deliveryScheduleQuotes",
-        include: [
-          {
-            model: DeliverySchedule,
-            as: "deliverySchedule",
-          },
-          {
-            model: Dispatch,
-            as: "dispatchDetails",
-            where:{id:dispatchId},
-            include: [
-              {
-                model: DispatchStatusLog,
-                as: "statusLogs",
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  });
+  // const quoteData = await Quote.findAll({
+  //   where: { id: quoteId },
+  //   include: [
+  //     {
+  //       model: DeliveryScheduleQuote,
+  //       as: "deliveryScheduleQuotes",
+  //       include: [
+  //         {
+  //           model: DeliverySchedule,
+  //           as: "deliverySchedule",
+  //         },
+  //         {
+  //           model: Dispatch,
+  //           as: "dispatchDetails",
+  //           where:{id:dispatchId},
+  //           include: [
+  //             {
+  //               model: DispatchStatusLog,
+  //               as: "statusLogs",
+  //             },
+  //           ],
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // });
 
-  return quoteData;
+  const dispatchData = await Dispatch.findByPk(dispatchId);
+
+  return dispatchData;
 };
 
 export const getQuoteDeliverySchedule = async (rfqId,sellerId) =>{
