@@ -66,3 +66,25 @@ export const getQuoteWithFullDetails = async ({ quoteId }) => {
 
   return quoteData;
 };
+
+export const getQuoteDeliverySchedule = async (rfqId,sellerId) =>{
+  try{
+
+    const quote = await Quote.findOne({
+      where: {
+        rfqId: rfqId,
+        supplierId: sellerId,
+        buyerStatus: 'accepted'
+      }
+    });
+    
+    if (!quote) return [];
+    
+    return await DeliveryScheduleQuote.findAll({
+      where: { quoteId: quote.id }
+    });
+    
+  }catch(error){
+    throw error;
+  }
+}

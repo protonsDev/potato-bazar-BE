@@ -8,7 +8,8 @@ import {
     getLogsByDispatchIdService,
     deleteStatusLogService,
     getQuoteDetails,
-    getQuoteWithFullDetails
+    getQuoteWithFullDetails,
+    getQuoteDeliverySchedule
   } from "../services/deliveryService";
   
   // ------------------ DISPATCH CONTROLLERS ------------------ //
@@ -147,3 +148,17 @@ export const getQuoteAggregateDetails = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const getDeliveryScheduleQuoteforRfq = async (req, res) => {
+  try{
+
+    const {rfqId } = req.query;
+     const userId = req.user.id;
+    const deliveryScheduleQuote = await getQuoteDeliverySchedule(rfqId,userId);
+
+    res.status(200).json({ success: true, deliveryScheduleQuote });
+  }catch(error){
+    console.log(error)
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+}
