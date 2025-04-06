@@ -136,12 +136,12 @@ export const getQuoteAggregateDetails = async (req, res) => {
 
     const data = await getQuoteWithFullDetails({ quoteId,dispatchId });
 
-    if (!data || data.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No data found for the provided quoteId",
-      });
-    }
+    // if (!data || data.length === 0) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: "No data found for the provided quoteId",
+    //   });
+    // }
 
     res.status(200).json({ success: true, data });
   } catch (err) {
