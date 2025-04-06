@@ -69,7 +69,15 @@ export const getQuoteWithFullDetails = async ({ quoteId, dispatchId }) => {
   //   ],
   // });
 
-  const dispatchData = await Dispatch.findByPk(dispatchId);
+  const dispatchData = await Dispatch.findAll({
+    where:{id:dispatchId},
+    include:[
+      {
+        model:DeliveryScheduleQuote,
+        as:"dispatchDetails"
+      }
+    ]
+  });
 
   return dispatchData;
 };
