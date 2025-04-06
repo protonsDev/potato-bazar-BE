@@ -7,9 +7,9 @@ import Quote from "../database/models/quote";
 import RFQ from "../database/models/rfqs";
 import { Op } from "sequelize";
 
-
 // Dispatch Services
-export const createDispatchService = async (data) => await Dispatch.create(data);
+export const createDispatchService = async (data) =>
+  await Dispatch.create(data);
 export const getDispatchByIdService = async (id) => await Dispatch.findByPk(id);
 export const getAllDispatchesService = async () => await Dispatch.findAll();
 export const updateDispatchService = async (id, updates) => {
@@ -24,18 +24,22 @@ export const deleteDispatchService = async (id) => {
   await dispatch.destroy();
 };
 
-export const getQuoteDetails = async (quoteId) =>{
-  try{
-   return  await Quote.findByPk(quoteId);
-  } catch(error){
+export const getQuoteDetails = async (quoteId) => {
+  try {
+    return await Quote.findByPk(quoteId);
+  } catch (error) {
     throw error;
   }
-}
+};
 
 // Status Log Services
-export const createStatusLogService = async (data) => await DispatchStatusLog.create(data);
+export const createStatusLogService = async (data) =>
+  await DispatchStatusLog.create(data);
 export const getLogsByDispatchIdService = async (dispatchId) =>
-  await DispatchStatusLog.findAll({ where: { dispatchId }, order: [["timestamp", "ASC"]] });
+  await DispatchStatusLog.findAll({
+    where: { dispatchId },
+    order: [["timestamp", "ASC"]],
+  });
 export const deleteStatusLogService = async (id) => {
   const log = await DispatchStatusLog.findByPk(id);
   if (!log) throw new Error("Log not found");
@@ -70,48 +74,60 @@ export const getQuoteWithFullDetails = async ({ quoteId, dispatchId }) => {
   // });
 
   const dispatchData = await Dispatch.findAll({
-    where:{id:dispatchId},
-    include:[
+    where: { id: dispatchId },
+    include: [
       {
-        model:DeliveryScheduleQuote,
-        as:"deliveryScheduleQuote"
-      }
-    ]
+        model: DeliveryScheduleQuote,
+        as: "deliveryScheduleQuote",
+        include: [
+          {
+            model: DeliverySchedule,
+            as: "deliveryScheduleQuotes",
+          },
+        ],
+      },
+      {
+        model: DispatchStatusLog,
+        as: "statusLogs",
+      },
+    ],
   });
 
   return dispatchData;
 };
 
-export const getQuoteDeliverySchedule = async (rfqId,sellerId) =>{
-  try{
-
+export const getQuoteDeliverySchedule = async (rfqId, sellerId) => {
+  try {
     const quote = await Quote.findOne({
       where: {
         rfqId: rfqId,
         supplierId: sellerId,
-        buyerStatus: 'accepted'
-      }
+        buyerStatus: "accepted",
+      },
     });
-    
+
     if (!quote) return [];
-    
+
     return await DeliveryScheduleQuote.findAll({
       where: { quoteId: quote.id },
-      include:[
-      {
-        model: DeliverySchedule,
-      as: "deliverySchedule"
-      }
-      ]
+      include: [
+        {
+          model: DeliverySchedule,
+          as: "deliverySchedule",
+        },
+      ],
     });
-    
-  }catch(error){
+  } catch (error) {
     throw error;
   }
-}
+};
 
-
-export const deliverySchedulePaginatedList = async (sellerId, page = 1, limit = 10, search = "") => {
+export const deliverySchedulePaginatedList = async (
+  sellerId,
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
   try {
     const offset = (page - 1) * limit;
 
@@ -129,7 +145,7 @@ export const deliverySchedulePaginatedList = async (sellerId, page = 1, limit = 
               as: "rfq",
               where: {
                 title: {
-                  [Op.iLike]: `%${search}%`, 
+                  [Op.iLike]: `%${search}%`,
                 },
               },
               required: true,
@@ -152,4 +168,3 @@ export const deliverySchedulePaginatedList = async (sellerId, page = 1, limit = 
     throw error;
   }
 };
-
