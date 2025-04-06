@@ -78,7 +78,7 @@ export const getQuoteWithFullDetails = async ({ quoteId, dispatchId }) => {
     include: [
       {
         model: DeliveryScheduleQuote,
-        as: "deliveryScheduleQuote",
+        as: "deliverySchedule",
         include: [
           {
             model: DeliverySchedule,
