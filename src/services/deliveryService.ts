@@ -41,7 +41,7 @@ export const deleteStatusLogService = async (id) => {
   if (!log) throw new Error("Log not found");
   await log.destroy();
 };
-export const getQuoteWithFullDetails = async ({ quoteId }) => {
+export const getQuoteWithFullDetails = async ({ quoteId, dispatchId }) => {
   const quoteData = await Quote.findAll({
     where: { id: quoteId },
     include: [
@@ -56,6 +56,7 @@ export const getQuoteWithFullDetails = async ({ quoteId }) => {
           {
             model: Dispatch,
             as: "dispatchDetails",
+            where:{id:dispatchId},
             include: [
               {
                 model: DispatchStatusLog,
