@@ -359,7 +359,7 @@ export const getSupplierRFQsDetailsBuyerSide = async (req, res) => {
 
 export const getSupplierRFQsControllerV2 = async (req, res) => {
   try {
-    const supplierId = 10;
+    const supplierId = Number(req.user.id);
     const search = (req.query.search as string) || "";
 
 
