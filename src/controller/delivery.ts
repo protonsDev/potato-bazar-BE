@@ -153,7 +153,7 @@ export const getDeliveryScheduleQuoteforRfq = async (req, res) => {
   try{
 
     const {rfqId } = req.query;
-     const userId = 10;
+     const userId = req.user.id;
     const deliveryScheduleQuote = await getQuoteDeliverySchedule(rfqId,userId);
 
     res.status(200).json({ success: true, deliveryScheduleQuote });
