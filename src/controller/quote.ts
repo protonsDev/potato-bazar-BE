@@ -14,8 +14,8 @@ export const submitQuote = async (req, res) => {
 
   export const submitDeliveryScheduleQuotes = async (req, res) => {
     try {
-      const { quoteId, deliveryQuotes } = req.body;
-      const result = await createDeliveryScheduleQuotes(quoteId, deliveryQuotes);
+      const { quoteId, deliveryQuotes,totalValue } = req.body;
+      const result = await createDeliveryScheduleQuotes(quoteId, deliveryQuotes,totalValue);
       return res.status(201).json({ success: true, data: result });
     } catch (err: any) {
       console.error("Error in submitDeliveryScheduleQuotes:", err);

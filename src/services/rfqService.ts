@@ -355,5 +355,64 @@ export const getRFQDetailsV2 = async (rfqId: number) => {
   }
 };
 
+export const getSupplierRFQsServiceV2 = async (supplierId, search = "") => {
+  try {
+    const { count, rows } = await RFQSupplier.findAndCountAll({
+      where: { supplierId },
+      include: [
+        {
+          model: RFQ,
+          as: "rfq",
+          where: search
+            ? { title: { [Op.iLike]: `%${search}%` } }
+            : undefined,
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+    //@ts-ignore
+    const rfqIds = rows.map((rfqSupplier) => rfqSupplier.rfq.id);
+
+    // Fetch only submitted and buyer-accepted quotes
+    const submittedQuotes = await Quote.findAll({
+      where: {
+        rfqId: { [Op.in]: rfqIds },
+        supplierId,
+        status: "submitted",
+        buyerStatus: "accepted",
+      },
+      attributes: ["rfqId", "id"], // Fetch quoteId
+    });
+
+    const quoteMap = new Map(
+      submittedQuotes.map((quote) => [quote.rfqId, quote.id])
+    );
+
+    // Filter only RFQs which have an accepted quote
+    const rfqsWithQuotes = rows
+      .filter((rfqSupplier) => {
+        //@ts-ignore
+        const rfqId = rfqSupplier.rfq.id;
+        return quoteMap.has(rfqId);
+      })
+      .map((rfqSupplier) => {
+        //@ts-ignore
+        const quoteId = quoteMap.get(rfqSupplier.rfq.id);
+        return {
+          ...rfqSupplier.toJSON(),
+          isQuote: true,
+          quoteId,
+        };
+      });
+
+    return {
+      rfqs: rfqsWithQuotes,
+    };
+  } catch (error) {
+    throw new Error(`Error fetching supplier RFQs: ${error.message}`);
+  }
+};
+
+
 
 

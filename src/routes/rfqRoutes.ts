@@ -1,7 +1,7 @@
 import { createValidator } from "express-joi-validation";
 import express from "express";
 import { rfqSchema, rfqSupplierSchema } from "../validation/rfqValidation";
-import { addSuppliers, createRFQ, getSupplierRFQsController, getSupplierRFQsDetails, getMyRFQsController, updateRFQ, updateDeliverySchedules, updateSuppliers } from "../controller/rfq";
+import { addSuppliers, createRFQ, getSupplierRFQsController, getSupplierRFQsDetails, getMyRFQsController, updateRFQ, updateDeliverySchedules, updateSuppliers, getSupplierRFQsControllerV2 } from "../controller/rfq";
 import { authMiddleware } from "../utlis/userAuth";
 const router = express.Router();
 const validator = createValidator({});
@@ -15,6 +15,7 @@ router.put("/",authMiddleware ,updateRFQ);
 router.put("/update-delivery-schedules",authMiddleware ,updateDeliverySchedules);
 router.put("/update-suppliers",authMiddleware ,updateSuppliers);
 router.get("/rfqs-buyer-details",authMiddleware ,getSupplierRFQsDetails);
+router.get("/supplier-rfqs-v2",authMiddleware ,getSupplierRFQsControllerV2);
 
 
 

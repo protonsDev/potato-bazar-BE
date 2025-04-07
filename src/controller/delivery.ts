@@ -8,7 +8,9 @@ import {
     getLogsByDispatchIdService,
     deleteStatusLogService,
     getQuoteDetails,
-    getQuoteWithFullDetails
+    getQuoteWithFullDetails,
+    getQuoteDeliverySchedule,
+    deliverySchedulePaginatedList
   } from "../services/deliveryService";
   
   // ------------------ DISPATCH CONTROLLERS ------------------ //
@@ -123,27 +125,55 @@ import {
 // Get Quote + Delivery Schedules + Dispatch + Dispatch Logs
 export const getQuoteAggregateDetails = async (req, res) => {
   try {
-    const { quoteId } = req.query;
+    const { dispatchId } = req.query;
 
-    if (!quoteId) {
+    if (!dispatchId) {
       return res.status(400).json({
         success: false,
-        message: "quoteId is required",
+        message: "dispatchId is required",
       });
     }
 
-    const data = await getQuoteWithFullDetails({ quoteId });
+    const data = await getQuoteWithFullDetails({ dispatchId });
 
-    if (!data || data.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No data found for the provided quoteId",
-      });
-    }
+    // if (!data || data.length === 0) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: "No data found for the provided quoteId",
+    //   });
+    // }
 
     res.status(200).json({ success: true, data });
   } catch (err) {
     console.error("Error fetching aggregate quote data:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const getDeliveryScheduleQuoteforRfq = async (req, res) => {
+  try{
+
+    const {rfqId } = req.query;
+     const userId = req.user.id;
+    const deliveryScheduleQuote = await getQuoteDeliverySchedule(rfqId,userId);
+
+    res.status(200).json({ success: true, deliveryScheduleQuote });
+  }catch(error){
+    console.log(error)
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
+
+export const supplierDeliveryList = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { page = 1, limit = 10, search = "" } = req.query;
+
+    const data = await deliverySchedulePaginatedList(userId, Number(page), Number(limit), search);
+
+    res.status(200).json({ success: true, ...data });
+  } catch (error) {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };

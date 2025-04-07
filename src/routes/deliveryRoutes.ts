@@ -10,6 +10,8 @@ import {
   getLogsByDispatchId,
   deleteStatusLog,
   getQuoteAggregateDetails,
+  getDeliveryScheduleQuoteforRfq,
+  supplierDeliveryList
 } from "../controller/delivery";
 
 import {
@@ -28,6 +30,8 @@ router.post("/",authMiddleware, validator.body(dispatchSchema), createDispatch);
 router.put("/:id",authMiddleware, validator.body(dispatchSchema), updateDispatch);
 router.delete("/:id", authMiddleware,deleteDispatch);
 router.get("/delivery-details", authMiddleware,getQuoteAggregateDetails);
+router.get("/delivery-quote-schedule", authMiddleware,getDeliveryScheduleQuoteforRfq);
+router.get("/dispatch-list", authMiddleware,supplierDeliveryList);
 
 
 // 🔹 Dispatch Status Log Routes
