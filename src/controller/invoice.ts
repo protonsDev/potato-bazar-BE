@@ -40,8 +40,7 @@ export const listInvoices = async (req, res) => {
 
 export const updateInvoicePayment = async (req, res) => {
   try {
-    const invoiceId = req.params.id;
-    const { paymentMode, paymentDate, paymentReference, notes } = req.body;
+    const { paymentMode, paymentDate, paymentReference, notes,invoiceId } = req.body;
 
     const updatedInvoice = await invoiceService.updateInvoicePaymentDetails(invoiceId, {
       paymentMode,
@@ -61,3 +60,35 @@ export const updateInvoicePayment = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const getInvoiceByUserId = async (req, res) => {
+  try{
+    const userId = req.user.id;
+    const role = req.user.role;
+    const { page = 1, limit = 10 } = req.query;
+
+    const parsedPage = parseInt(page, 10);
+    const parsedLimit = parseInt(limit, 10);
+
+    const invoices = await invoiceService.getInvoicesByRole(userId, role, parsedPage, parsedLimit);
+
+    return res.status(200).json({
+      success: true,
+      data: invoices.rows,
+      pagination: {
+        totalItems: invoices.count,
+        totalPages: Math.ceil(invoices.count / parsedLimit),
+        currentPage: parsedPage,
+      },
+      message: "Invoices retrieved successfully",
+    });
+
+  }catch(error){
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+
+}
+
+
+
+

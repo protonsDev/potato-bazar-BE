@@ -15,8 +15,8 @@ export const createInvoiceSchema = Joi.object({
 });
 
 export const invoicePaymentSchema = Joi.object({
+  invoiceId:Joi.number().required(),
   paymentMode: Joi.string().required(),
-  paymentDate: Joi.date().required(),
   paymentReference: Joi.string().required(),
   notes: Joi.string().allow(""),
 });

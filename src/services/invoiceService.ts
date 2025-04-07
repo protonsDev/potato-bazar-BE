@@ -31,3 +31,28 @@ export const updateInvoicePaymentDetails = async (invoiceId, data) => {
   await invoice.update(data);
   return invoice;
 };
+
+export const getInvoicesByRole = async (userId, role, page, limit) => {
+  const offset = (page - 1) * limit;
+
+  const whereClause = {};
+
+  if (role === "buyer") {
+    //@ts-ignore
+    whereClause.buyerId = userId;
+  } else if (role === "seller") {
+        //@ts-ignore
+    whereClause.sellerId = userId;
+  } else {
+    throw new Error("Invalid user role");
+  }
+
+  const invoices = await Invoice.findAndCountAll({
+    where: whereClause,
+    order: [["createdAt", "DESC"]],
+    limit,
+    offset,
+  });
+
+  return invoices;
+};

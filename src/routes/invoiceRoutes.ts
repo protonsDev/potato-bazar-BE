@@ -4,7 +4,8 @@ import {
   createInvoice,
   getInvoiceById,
   listInvoices,
-  updateInvoicePayment
+  updateInvoicePayment,
+  getInvoiceByUserId
 } from "../controller/invoice";
 import { createInvoiceSchema,invoicePaymentSchema } from "../validation/invoiceValidation";
 import { authMiddleware } from "../utlis/userAuth";
@@ -18,13 +19,15 @@ router.post(
   validator.body(createInvoiceSchema),
   createInvoice
 );
+router.get("/user-invoice", authMiddleware, getInvoiceByUserId);
 router.get("/", authMiddleware, listInvoices);
-router.get("/:id", authMiddleware, getInvoiceById);
+router.get("/:id", getInvoiceById);
 router.patch(
-  "/:id/payment",
+  "/update-payment",
   authMiddleware,
   validator.body(invoicePaymentSchema),
   updateInvoicePayment
 );
+
 
 export default router;
