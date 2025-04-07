@@ -164,3 +164,49 @@ export const deliverySchedulePaginatedList = async (sellerId, page = 1, limit = 
   }
 };
 
+export const getBuyerDispatches = async (buyerId: number, page = 1, limit = 10) => {
+  const offset = (page - 1) * limit;
+
+  const { count, rows } = await Dispatch.findAndCountAll({
+    offset,
+    limit,
+    order: [['createdAt', 'DESC']],
+    include: [
+      {
+        model: Quote,
+        as: "quote",
+        required: true,
+        include: [
+          {
+            model: RFQ,
+            as: "rfq",
+            where: { buyerId },
+            required: true,
+          },
+        ],
+      },
+      {
+        model: DeliveryScheduleQuote,
+        as: "deliveryScheduleQuote",
+        include: [
+          {
+            model: DeliverySchedule,
+            as: "deliverySchedule",
+          },
+        ],
+      },
+    ],
+  });
+
+  return {
+    dispatches: rows,
+    pagination: {
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil(count / limit),
+    },
+  };
+};
+
+

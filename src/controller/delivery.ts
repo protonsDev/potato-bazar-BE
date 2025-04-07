@@ -10,7 +10,8 @@ import {
     getQuoteDetails,
     getQuoteWithFullDetails,
     getQuoteDeliverySchedule,
-    deliverySchedulePaginatedList
+    deliverySchedulePaginatedList,
+    getBuyerDispatches
   } from "../services/deliveryService";
   
   // ------------------ DISPATCH CONTROLLERS ------------------ //
@@ -177,3 +178,23 @@ export const supplierDeliveryList = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const getDispatchesForBuyer = async (req, res) => {
+  try {
+    const buyerId =req.user.id;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    if (!buyerId) {
+      return res.status(400).json({ message: "buyerId is required" });
+    }
+
+    const result = await getBuyerDispatches(buyerId, page, limit);
+
+    res.json(result);
+  } catch (err) {
+    console.error("Error fetching buyer dispatches:", err);
+    res.status(500).json({ message: "Failed to fetch dispatches" });
+  }
+};
+

@@ -11,7 +11,8 @@ import {
   deleteStatusLog,
   getQuoteAggregateDetails,
   getDeliveryScheduleQuoteforRfq,
-  supplierDeliveryList
+  supplierDeliveryList,
+  getDispatchesForBuyer
 } from "../controller/delivery";
 
 import {
@@ -32,6 +33,7 @@ router.delete("/:id", authMiddleware,deleteDispatch);
 router.get("/delivery-details", authMiddleware,getQuoteAggregateDetails);
 router.get("/delivery-quote-schedule", authMiddleware,getDeliveryScheduleQuoteforRfq);
 router.get("/dispatch-list", authMiddleware,supplierDeliveryList);
+router.get("/buyer-dispatch-list", authMiddleware,getDispatchesForBuyer);
 
 
 // 🔹 Dispatch Status Log Routes
