@@ -2,6 +2,7 @@ import Invoice from "../database/models/invoice";
 import Quote from "../database/models/quote";
 import RFQ from "../database/models/rfqs";
 import User from "../database/models/user";
+import { Op } from "sequelize";
 
 export const createInvoice = async (data) => {
   const subtotal = data.quantity * data.pricePerUnit;
@@ -60,19 +61,29 @@ export const updateInvoicePaymentDetails = async (invoiceId, data) => {
   return invoice;
 };
 
-export const getInvoicesByRole = async (userId, role, page, limit) => {
+
+export const getInvoicesByRole = async (userId, role, page, limit, search, status) => {
   const offset = (page - 1) * limit;
 
-  const whereClause = {};
+  const whereClause: any = {};
 
   if (role === "buyer") {
-    //@ts-ignore
     whereClause.buyerId = userId;
   } else if (role === "seller") {
-        //@ts-ignore
     whereClause.sellerId = userId;
   } else {
     throw new Error("Invalid user role");
+  }
+
+  // Apply optional filters
+  if (search) {
+    whereClause.invoiceNumber = {
+      [Op.iLike]: `%${search}%`, 
+    };
+  }
+
+  if (status) {
+    whereClause.status = status;
   }
 
   const invoices = await Invoice.findAndCountAll({
@@ -84,3 +95,4 @@ export const getInvoicesByRole = async (userId, role, page, limit) => {
 
   return invoices;
 };
+

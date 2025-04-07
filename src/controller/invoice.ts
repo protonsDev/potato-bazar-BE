@@ -62,15 +62,22 @@ export const updateInvoicePayment = async (req, res) => {
 };
 
 export const getInvoiceByUserId = async (req, res) => {
-  try{
+  try {
     const userId = req.user.id;
     const role = req.user.role;
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, search = "", status } = req.query;
 
     const parsedPage = parseInt(page, 10);
     const parsedLimit = parseInt(limit, 10);
 
-    const invoices = await invoiceService.getInvoicesByRole(userId, role, parsedPage, parsedLimit);
+    const invoices = await invoiceService.getInvoicesByRole(
+      userId,
+      role,
+      parsedPage,
+      parsedLimit,
+      search,
+      status
+    );
 
     return res.status(200).json({
       success: true,
@@ -82,12 +89,11 @@ export const getInvoiceByUserId = async (req, res) => {
       },
       message: "Invoices retrieved successfully",
     });
-
-  }catch(error){
+  } catch (error) {
     res.status(500).json({ success: false, message: "Server error" });
   }
+};
 
-}
 
 
 
