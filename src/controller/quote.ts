@@ -46,13 +46,13 @@ export const submitQuote = async (req, res) => {
 
   export const getMyQoutes = async (req, res) => {
     try {
-      const { page = 1, limit = 10 } = req.query;
-      const supplierId = req.user.id;
+      const { page = 1, limit = 10, status } = req.query;
+      const supplierId = 10;
   
       const parsedPage = parseInt(page, 10);
       const parsedLimit = parseInt(limit, 10);
   
-      const quote = await getQuoteListDb(supplierId,parsedPage, parsedLimit);
+      const quote = await getQuoteListDb(supplierId,parsedPage, parsedLimit,status);
   
       return res.status(200).json({
         success: true,

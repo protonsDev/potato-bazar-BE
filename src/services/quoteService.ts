@@ -58,21 +58,28 @@ export const updateQuoteStatus = async (quoteId: number, status: "accepted" | "r
   }
 };
 
-export const getQuoteListDb = async (supplierId, page, limit) => {
+export const getQuoteListDb = async (supplierId, page, limit, status) => {
   try {
     const offset = (page - 1) * limit;
 
+    const whereClause = { supplierId };
+
+    if (status && status === 'accepted') {
+      //@ts-ignore
+      whereClause.buyerStatus = 'accepted';
+    }
+
     const { count, rows } = await Quote.findAndCountAll({
-      where: { supplierId },
-      include:[
+      where: whereClause,
+      include: [
         {
-          model:RFQ,
+          model: RFQ,
           as: "rfq",
         },
         {
           model: User,
-          as:"supplier"
-        }
+          as: "supplier",
+        },
       ],
       order: [["createdAt", "DESC"]],
       limit,
@@ -94,6 +101,7 @@ export const getQuoteListDb = async (supplierId, page, limit) => {
     throw new Error(`Error fetching Quotes: ${error.message}`);
   }
 };
+
 
 export const getQoutesDetailsById = async (quoteId) => {
 try{
