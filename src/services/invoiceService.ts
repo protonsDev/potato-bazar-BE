@@ -1,4 +1,7 @@
 import Invoice from "../database/models/invoice";
+import Quote from "../database/models/quote";
+import RFQ from "../database/models/rfqs";
+import User from "../database/models/user";
 
 export const createInvoice = async (data) => {
   const subtotal = data.quantity * data.pricePerUnit;
@@ -17,7 +20,32 @@ export const createInvoice = async (data) => {
 };
 
 export const getInvoiceById = async (id: number) => {
-  return await Invoice.findByPk(id);
+  return await Invoice.findByPk(id, {
+    include: [
+      {
+        model: User,
+        as: "seller",
+        attributes: ["id", "name"],
+      },
+      {
+        model: User,
+        as: "buyer",
+        attributes: ["id", "name"],
+      },
+      {
+        model: Quote,
+        as: "quote", 
+        attributes: ["id"],
+        include:[
+          {
+            model:RFQ,
+            as: "rfq",
+          }
+        ]
+
+      }
+    ],
+  });
 };
 
 export const listInvoices = async () => {

@@ -1,5 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "./db";
+import User from "./user";
+import Quote from "./quote";
 
 class Invoice extends Model {
   public id!: number;
@@ -116,5 +118,21 @@ Invoice.init(
     timestamps: true,
   }
 );
+Invoice.belongsTo(User, {
+  foreignKey: "sellerId",
+  as: "seller",
+});
+
+// Buyer association
+Invoice.belongsTo(User, {
+  foreignKey: "buyerId",
+  as: "buyer",
+});
+
+// Quote association
+Invoice.belongsTo(Quote, {
+  foreignKey: "quoteId",
+  as: "quote",
+});
 
 export default Invoice;
