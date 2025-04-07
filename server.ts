@@ -7,6 +7,7 @@ import rfqRoutes from "./src/routes/rfqRoutes";
 import quoteRoutes from "./src/routes/quoteRoutes";
 import negotiationRoutes from "./src/routes/negotiationRoutes";
 import deliveryRoutes from "./src/routes/deliveryRoutes";
+import invoiceRoutes from './src/routes/invoiceRoutes';
 
 
 app.use(cors());
@@ -17,6 +18,8 @@ app.use("/api/rfq", rfqRoutes);
 app.use("/api/quote", quoteRoutes);
 app.use("/api/negotiation", negotiationRoutes);
 app.use("/api/delivery", deliveryRoutes);
+app.use("/api/invoice", invoiceRoutes);
+
 
 
 

@@ -3,8 +3,7 @@ import * as invoiceService from "../services/invoiceService";
 
 export const createInvoice = async (req, res) => {
   try {
-    const {value } = req.body;
-    
+    const value  = req.body;    
     const invoice = await invoiceService.createInvoice(value);
     res.status(201).json({ success: true, data: invoice });
   } catch (err) {

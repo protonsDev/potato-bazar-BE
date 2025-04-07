@@ -12,7 +12,6 @@ import { authMiddleware } from "../utlis/userAuth";
 const router = express.Router();
 const validator = createValidator({});
 
-// 🔹 Invoice Routes
 router.post(
   "/",
   authMiddleware,
