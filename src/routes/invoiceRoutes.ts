@@ -14,7 +14,7 @@ const validator = createValidator({});
 
 router.post(
   "/",
-  authMiddleware,
+  
   validator.body(createInvoiceSchema),
   createInvoice
 );

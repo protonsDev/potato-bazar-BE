@@ -5,7 +5,6 @@ class Invoice extends Model {
   public id!: number;
   public invoiceNumber!: string;
   public quoteId!: number;
-  public dispatchId!: number;
   public sellerId!: number;
   public buyerId!: number;
   public invoiceDate!: Date;
@@ -41,11 +40,6 @@ Invoice.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       field: "quote_id",
-    },
-    dispatchId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      field: "dispatch_id",
     },
     sellerId: {
       type: DataTypes.INTEGER,

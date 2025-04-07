@@ -2,7 +2,6 @@ import Joi from "joi";
 
 export const createInvoiceSchema = Joi.object({
   quoteId: Joi.number().required(),
-  dispatchId: Joi.number().required(),
   sellerId: Joi.number().required(),
   buyerId: Joi.number().required(),
   invoiceDate: Joi.date().required(),
