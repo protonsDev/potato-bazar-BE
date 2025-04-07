@@ -47,7 +47,7 @@ export const submitQuote = async (req, res) => {
   export const getMyQoutes = async (req, res) => {
     try {
       const { page = 1, limit = 10, status } = req.query;
-      const supplierId = 10;
+      const supplierId = req.user.id;
   
       const parsedPage = parseInt(page, 10);
       const parsedLimit = parseInt(limit, 10);
