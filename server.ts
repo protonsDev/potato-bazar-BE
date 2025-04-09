@@ -8,6 +8,7 @@ import quoteRoutes from "./src/routes/quoteRoutes";
 import negotiationRoutes from "./src/routes/negotiationRoutes";
 import deliveryRoutes from "./src/routes/deliveryRoutes";
 import invoiceRoutes from './src/routes/invoiceRoutes';
+import notificationRoutes from './src/routes/notificationRoutes';
 
 
 app.use(cors());
@@ -19,6 +20,7 @@ app.use("/api/quote", quoteRoutes);
 app.use("/api/negotiation", negotiationRoutes);
 app.use("/api/delivery", deliveryRoutes);
 app.use("/api/invoice", invoiceRoutes);
+app.use("/api/notification", notificationRoutes);
 
 
 
