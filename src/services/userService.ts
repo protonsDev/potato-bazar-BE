@@ -1,14 +1,36 @@
 import User from "../database/models/user";
 import { Op } from "sequelize";
+import { UniqueConstraintError } from "sequelize";
+
 
 export const createUserInDB = async (userModuleData: any) => {
-  try{
+  try {
     return await User.create(userModuleData);
-  }catch(error){
+  } catch (error: any) {
+    if (error instanceof UniqueConstraintError) {
+      const field = error.errors[0]?.path;
+      let message = "Duplicate value";
+
+      switch (field) {
+        case "email":
+          message = "Email already exists";
+          break;
+        case "phone":
+          message = "Phone number already exists";
+          break;
+        case "gstin":
+          message = "GSTIN already exists";
+          break;
+      }
+
+      const customError = new Error(message);
+      (customError as any).statusCode = 400;
+      throw customError;
+    }
+
     throw error;
   }
-  };
-
+};
 
 export const findUserInDB = async (object: any) => {
   try {

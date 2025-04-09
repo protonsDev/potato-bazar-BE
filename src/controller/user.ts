@@ -10,34 +10,41 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const signup = async (req, res) => {
-    try {
-      const email = req.body.email;
-      const role = req.body.role;
-  
-      const userData = req.body;
-  
-      const existingUser = await findUserInDB({ email: email });
-      if (existingUser) {
-        return res.status(400).json({ success: false, message: "Email already exists" });
-      }
-  
-      // Create new user
-      const newUser = await createUserInDB(userData);
-  
-      // Generate JWT Token
-      const token = jwt.sign(
-        { id: newUser.id, email: newUser.email, role: newUser.role },
-        JWT_SECRET,
-        { expiresIn: "24h" }
-      );
-  
-      res
-        .status(201)
-        .json({ success: true, message: "User created successfully", token, user: newUser });
-    } catch (error) {
-      res.status(500).json({success: false, message: "Error creating user", error });
+  try {
+    const { email, role, ...userData } = req.body;
+
+    const existingUser = await findUserInDB({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email already exists" });
     }
-  };
+
+    const newUser = await createUserInDB(req.body);
+
+    const token = jwt.sign(
+      { id: newUser.id, email: newUser.email, role: newUser.role },
+      JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      token,
+      user: newUser,
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    const message = error.message || "Error creating user";
+
+    res.status(statusCode).json({
+      success: false,
+      message,
+    });
+  }
+};
+
 
   export const login = async (req , res) => {
     try {
