@@ -10,22 +10,23 @@ export const getSubscribersByUser = async (userId: number) => {
   return await Subscriber.findAll({ where: { userId } });
 };
 
-export const notifyUser = async (userId, title, message, type = "general") => {
-    await Notification.create({
-      userId,
-      title,
-      message,
-      type,
-      read: false,
-    });
-  
-    const subscriber = await Subscriber.findOne({ where: { userId } });
-  
-    if (subscriber?.deviceToken && subscriber?.externalUserId) {
-      await sendPushNotification({
-        playerId: subscriber.deviceToken,
-        title,
-        message,
-      });
-    }
-  };
+export const notifyUser = async (
+  userId: number,
+  title: string,
+  message: string,
+  type: string = "general"
+): Promise<void> => {
+  await Notification.create({
+    userId,
+    title,
+    message,
+    type,
+    read: false,
+  });
+
+  const subscriber = await Subscriber.findOne({ where: { userId } });
+
+  if (subscriber?.externalUserId) {
+    await sendPushNotification(subscriber.externalUserId, title, message);
+  }
+};

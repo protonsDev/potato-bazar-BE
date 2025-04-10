@@ -9,9 +9,10 @@ const validator = createValidator();
 
 router.post(
     "/",
-        validator.body(createSubscriberSchema),
+    authMiddleware,
+    validator.body(createSubscriberSchema),
     createSubscriber
   );
 
-
+  
 export default router;

@@ -3,14 +3,15 @@ import Quote from "../database/models/quote";
 import RFQ from "../database/models/rfqs";
 import User from "../database/models/user";
 import { Op } from "sequelize";
+import { sendPushNotification } from "../utlis/notifications";
+import { notifyUser } from "./notificationService";
 
 export const createInvoice = async (data) => {
   const subtotal = data.quantity * data.pricePerUnit;
   const totalAmount = subtotal + (data.tax || 0);
-
   const invoiceNumber = `INV-${Date.now()}`;
 
-  return await Invoice.create({
+  const invoice = await Invoice.create({
     ...data,
     subtotal,
     totalAmount,
@@ -18,6 +19,24 @@ export const createInvoice = async (data) => {
     paymentStatus: "PENDING",
     status: "GENERATED",
   });
+
+  // Notify Seller
+  await notifyUser(
+    invoice.sellerId,
+    "Invoice Generated",
+    `An invoice (#${invoice.invoiceNumber}) has been generated for your quote.`,
+    "invoice"
+  );
+
+  // Notify Buyer
+  await notifyUser(
+    invoice.buyerId,
+    "New Invoice Received",
+    `You have received a new invoice (#${invoice.invoiceNumber}).`,
+    "invoice"
+  );
+
+  return invoice;
 };
 
 export const getInvoiceById = async (id: number) => {
