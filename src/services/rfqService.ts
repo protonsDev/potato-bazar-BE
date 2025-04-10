@@ -118,32 +118,39 @@ export const getSupplierRFQsService = async (
   //@ts-ignore
   const rfqIds = rows.map((row) => row.rfq.id);
 
-  // Get all quotes by this supplier for the listed RFQs
-  const quotes = await Quote.findAll({
+  // Fetch all quotes submitted by this supplier for those RFQs
+  const submittedQuotes = await Quote.findAll({
     where: {
       supplierId,
       rfqId: {
         [Op.in]: rfqIds,
       },
     },
-    attributes: ["rfqId"],
+    attributes: ["id", "rfqId"],
   });
 
-  const quotedRfqIds = new Set(quotes.map((q) => q.rfqId));
+  const quoteMap = new Map<number, number>();
+  submittedQuotes.forEach((quote) => {
+    quoteMap.set(quote.rfqId, quote.id);
+  });
 
-  // Attach `isApplied` flag
-  const rfqsWithStatus = rows.map((row) => ({
-    ...row.toJSON(),
-    rfq: {
-      //@ts-ignore
-      ...row.rfq.toJSON(),
-      //@ts-ignore
-      isApplied: quotedRfqIds.has(row.rfq.id),
-    },
-  }));
+  // Attach `isApplied` and `quoteId`
+  const rfqsWithQuoteInfo = rows.map((row) => {
+    //@ts-ignore
+    const rfq = row.rfq.toJSON();
+    const quoteId = quoteMap.get(rfq.id);
+    return {
+      ...row.toJSON(),
+      rfq: {
+        ...rfq,
+        isApplied: quoteId !== undefined,
+        quoteId: quoteId || null,
+      },
+    };
+  });
 
   return {
-    rfqs: rfqsWithStatus,
+    rfqs: rfqsWithQuoteInfo,
     pagination: {
       total: count,
       page,
@@ -151,7 +158,6 @@ export const getSupplierRFQsService = async (
     },
   };
 };
-
 
 export const getRFQDetails = async (rfqId: number, supplierId?: number) => {
   try {
