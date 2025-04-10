@@ -75,65 +75,53 @@ export const addSuppliersToRFQ = async (
   }
 };
 
-export const getSupplierRFQsService = async (supplierId, page, limit, search = "") => {
-  try {
-    const offset = (page - 1) * limit;
+export const getSupplierRFQsService = async (
+  supplierId,
+  page,
+  limit,
+  search = "",
+  variety = ""
+) => {
+  const offset = (page - 1) * limit;
 
-    const { count, rows } = await RFQSupplier.findAndCountAll({
-      where: { supplierId },
-      include: [
-        {
-          model: RFQ,
-          as: "rfq",
-          where: search
-            ? { title: { [Op.iLike]: `%${search}%` } }
-            : undefined,
-        },
-      ],
-      order: [["createdAt", "DESC"]],
-      limit,
-      offset,
-    });
+  const potatoVarietyArray = variety
+    ? variety.split(",").map((v) => v.trim())
+    : [];
 
-    //@ts-ignore
-    const rfqIds = rows.map((rfqSupplier) => rfqSupplier.rfq.id);
+  const rfqWhere: any = {};
 
-    const submittedQuotes = await Quote.findAll({
-      where: {
-        rfqId: { [Op.in]: rfqIds },
-        supplierId,
-        status: "submitted",
-      },
-      attributes: ["rfqId", "id"], // Fetch quoteId
-    });
-
-    const quoteMap = new Map(
-      submittedQuotes.map((quote) => [quote.rfqId, quote.id])
-    );
-
-    const rfqsWithQuotes = rows.map((rfqSupplier) => {
-              //@ts-ignore
-      const quoteId = quoteMap.get(rfqSupplier.rfq.id) || null;
-      return {
-        ...rfqSupplier.toJSON(),
-        isQuote: !!quoteId, // true if quote exists
-        quoteId, // Provide quoteId if available
-      };
-    });
-
-    const totalPages = Math.ceil(count / limit);
-
-    return {
-      rfqs: rfqsWithQuotes,
-      pagination: {
-        totalItems: count,
-        totalPages,
-        currentPage: page,
-      },
-    };
-  } catch (error) {
-    throw new Error(`Error fetching supplier RFQs: ${error.message}`);
+  if (search) {
+    rfqWhere.title = { [Op.iLike]: `%${search}%` };
   }
+
+  if (potatoVarietyArray.length > 0) {
+    rfqWhere.potatoVariety = {
+      [Op.in]: potatoVarietyArray,
+    };
+  }
+
+  const { count, rows } = await RFQSupplier.findAndCountAll({
+    where: { supplierId },
+    include: [
+      {
+        model: RFQ,
+        as: "rfq",
+        where: rfqWhere,
+      },
+    ],
+    order: [["createdAt", "DESC"]],
+    limit,
+    offset,
+  });
+
+  return {
+    rfqs: rows,
+    pagination: {
+      total: count,
+      page,
+      pageCount: Math.ceil(count / limit),
+    },
+  };
 };
 
 export const getRFQDetails = async (rfqId: number, supplierId?: number) => {

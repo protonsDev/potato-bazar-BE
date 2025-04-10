@@ -2,6 +2,8 @@ import DeliveryScheduleQuote from "../database/models/delivery_schedule_quote";
 import Quote from "../database/models/quote";
 import RFQ from "../database/models/rfqs";
 import User from "../database/models/user";
+import { Op } from "sequelize";
+
 
 export const createQuote = async (data) => {
   try {
@@ -58,15 +60,25 @@ export const updateQuoteStatus = async (quoteId: number, status: "accepted" | "r
   }
 };
 
-export const getQuoteListDb = async (supplierId, page, limit, status) => {
+export const getQuoteListDb = async (
+  supplierId,
+  page,
+  limit,
+  status,
+  search = ""
+) => {
   try {
     const offset = (page - 1) * limit;
 
-    const whereClause = { supplierId };
+    const whereClause: any = { supplierId };
 
-    if (status && status === 'accepted') {
-      //@ts-ignore
-      whereClause.buyerStatus = 'accepted';
+    if (status === "accepted") {
+      whereClause.buyerStatus = "accepted";
+    }
+
+    const rfqWhere: any = {};
+    if (search) {
+      rfqWhere.title = { [Op.iLike]: `%${search}%` };
     }
 
     const { count, rows } = await Quote.findAndCountAll({
@@ -75,6 +87,7 @@ export const getQuoteListDb = async (supplierId, page, limit, status) => {
         {
           model: RFQ,
           as: "rfq",
+          where: rfqWhere,
         },
         {
           model: User,
