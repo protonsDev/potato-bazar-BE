@@ -114,8 +114,36 @@ export const getSupplierRFQsService = async (
     offset,
   });
 
+  // Extract RFQ IDs
+  //@ts-ignore
+  const rfqIds = rows.map((row) => row.rfq.id);
+
+  // Get all quotes by this supplier for the listed RFQs
+  const quotes = await Quote.findAll({
+    where: {
+      supplierId,
+      rfqId: {
+        [Op.in]: rfqIds,
+      },
+    },
+    attributes: ["rfqId"],
+  });
+
+  const quotedRfqIds = new Set(quotes.map((q) => q.rfqId));
+
+  // Attach `isApplied` flag
+  const rfqsWithStatus = rows.map((row) => ({
+    ...row.toJSON(),
+    rfq: {
+      //@ts-ignore
+      ...row.rfq.toJSON(),
+      //@ts-ignore
+      isApplied: quotedRfqIds.has(row.rfq.id),
+    },
+  }));
+
   return {
-    rfqs: rows,
+    rfqs: rfqsWithStatus,
     pagination: {
       total: count,
       page,
@@ -123,6 +151,7 @@ export const getSupplierRFQsService = async (
     },
   };
 };
+
 
 export const getRFQDetails = async (rfqId: number, supplierId?: number) => {
   try {
