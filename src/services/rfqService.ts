@@ -224,6 +224,12 @@ export const getMyRFQsService = async (buyerId, page, limit, search = "", status
       whereClause.status = status;
     }
 
+    if (search) {
+      whereClause.title = {
+        [Op.iLike]: `%${search}%`,
+      };
+    }
+
     const { count, rows } = await RFQ.findAndCountAll({
       where: whereClause,
       order: [["createdAt", "DESC"]],
