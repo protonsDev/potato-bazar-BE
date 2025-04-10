@@ -179,12 +179,18 @@ export const getRFQDetails = async (rfqId: number, supplierId?: number) => {
 
 
 
-export const getMyRFQsService = async (buyerId, page, limit, search = "") => {
+export const getMyRFQsService = async (buyerId, page, limit, search = "", status = "") => {
   try {
     const offset = (page - 1) * limit;
 
+    const whereClause: any = { buyerId };
+
+    if (status) {
+      whereClause.status = status;
+    }
+
     const { count, rows } = await RFQ.findAndCountAll({
-      where: { buyerId },
+      where: whereClause,
       order: [["createdAt", "DESC"]],
       limit,
       offset,

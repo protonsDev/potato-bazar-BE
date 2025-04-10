@@ -210,8 +210,9 @@ export const getMyRFQsController = async (req, res) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const search = (req.query.search as string) || "";
+    const status = (req.query.status as string) || ""
 
-    const data = await getMyRFQsService(buyerId,page,limit,search);
+    const data = await getMyRFQsService(buyerId,page,limit,search,status);
     return res.json({
       success: true,
       data: data.rfqs,
