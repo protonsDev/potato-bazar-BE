@@ -22,3 +22,17 @@ export const getMySubscribers = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const getMyNotifications = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { page = 1, limit = 10 } = req.query;
+
+    const data = await subscriberService.getUserNotifications(userId, Number(page), Number(limit));
+
+    res.status(200).json({ success: true, ...data });
+  } catch (err) {
+    console.error("Fetch notifications error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

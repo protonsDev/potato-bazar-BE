@@ -35,6 +35,7 @@ export const createDeliveryScheduleQuotes = async (quoteId: number,
   }
 };
 
+
 export const updateQuoteStatus = async (quoteId: number, status: "accepted" | "rejected") => {
   try {
     const quote = await Quote.findByPk(quoteId);
@@ -50,8 +51,12 @@ export const updateQuoteStatus = async (quoteId: number, status: "accepted" | "r
       if (existingAcceptedQuote) {
         return null; 
       }
-      
-      return await quote.update({ buyerStatus: "accepted", negotiatedPrice: quote.totalCost });
+
+      await quote.update({ buyerStatus: "accepted", negotiatedPrice: quote.totalCost });
+
+      await RFQ.update({ status: "awarded" }, { where: { id: quote.rfqId } });
+
+      return quote;
     } else {
       return await quote.update({ buyerStatus: "rejected" });
     }
@@ -59,6 +64,7 @@ export const updateQuoteStatus = async (quoteId: number, status: "accepted" | "r
     throw error;
   }
 };
+
 
 export const getQuoteListDb = async (
   supplierId,
