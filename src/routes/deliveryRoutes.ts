@@ -28,7 +28,7 @@ const validator = createValidator({});
 router.post("/",authMiddleware, validator.body(dispatchSchema), createDispatch);
 // router.get("/",authMiddleware, getAllDispatches);
 // router.get("/getDispatchById/:id", authMiddleware,getDispatchById);
-router.put("/:id",authMiddleware, validator.body(dispatchSchema), updateDispatch);
+router.put("/:id", updateDispatch);
 router.delete("/:id", authMiddleware,deleteDispatch);
 router.get("/delivery-details", authMiddleware,getQuoteAggregateDetails);
 router.get("/delivery-quote-schedule", authMiddleware,getDeliveryScheduleQuoteforRfq);

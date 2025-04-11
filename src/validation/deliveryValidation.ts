@@ -9,6 +9,7 @@ export const dispatchSchema = Joi.object({
   driverContact: Joi.string().pattern(/^[0-9]{10}$/).required(),
   notes: Joi.string().allow(""),
   quoteId: Joi.number().required(),
+  isReceived: Joi.boolean().optional()
 
 });
 

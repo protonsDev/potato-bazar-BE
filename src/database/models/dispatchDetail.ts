@@ -15,6 +15,8 @@ class DispatchDetail extends Model {
   public dispatchedAt?: Date;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public isReceived!: boolean;
+
 }
 
 DispatchDetail.init(
@@ -60,6 +62,12 @@ DispatchDetail.init(
       field: "dispatched_at",
       defaultValue: DataTypes.NOW,
     },
+    isReceived: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      field: "is_received",
+      defaultValue: false,
+    }
   },
   {
     sequelize,
