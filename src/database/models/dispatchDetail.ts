@@ -16,6 +16,8 @@ class DispatchDetail extends Model {
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   public isReceived!: boolean;
+  public isRejected!: boolean;
+
 
 }
 
@@ -66,6 +68,12 @@ DispatchDetail.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       field: "is_received",
+      defaultValue: false,
+    },
+    isRejected:{
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      field: "is_rejected",
       defaultValue: false,
     }
   },
