@@ -122,7 +122,12 @@ export const getQuoteDeliverySchedule = async (rfqId,sellerId) =>{
 }
 
 
-export const deliverySchedulePaginatedList = async (sellerId, page = 1, limit = 10, search = "") => {
+export const deliverySchedulePaginatedList = async (
+  sellerId,
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
   try {
     const offset = (page - 1) * limit;
 
@@ -140,18 +145,40 @@ export const deliverySchedulePaginatedList = async (sellerId, page = 1, limit = 
               as: "rfq",
               where: {
                 title: {
-                  [Op.iLike]: `%${search}%`, 
+                  [Op.iLike]: `%${search}%`,
                 },
               },
               required: true,
             },
           ],
         },
+        {
+          model: DeliveryScheduleQuote,
+          as: "deliveryScheduleQuote",
+          include: [
+            {
+              model: DeliverySchedule,
+              as: "deliverySchedule",
+              attributes: ["deliveryLocation"], // 👈 Fetch only what's needed
+            },
+          ],
+        },
       ],
     });
 
+    // Add deliveryLocation to each dispatch record
+    const enrichedData = dispatches.rows.map((dispatch) => {
+      //@ts-ignore
+      const location = dispatch.deliveryScheduleQuote?.deliverySchedule?.deliveryLocation || null;
+
+      return {
+        ...dispatch.toJSON(),
+        deliveryLocation: location,
+      };
+    });
+
     return {
-      data: dispatches.rows,
+      data: enrichedData,
       pagination: {
         total: dispatches.count,
         page,
@@ -163,6 +190,7 @@ export const deliverySchedulePaginatedList = async (sellerId, page = 1, limit = 
     throw error;
   }
 };
+
 
 export const getBuyerDispatches = async (buyerId: number, page = 1, limit = 10) => {
   const offset = (page - 1) * limit;
