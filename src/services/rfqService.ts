@@ -214,6 +214,8 @@ export const getRFQDetails = async (rfqId: number, supplierId?: number) => {
 
 
 
+
+
 export const getMyRFQsService = async (buyerId, page, limit, search = "", status = "") => {
   try {
     const offset = (page - 1) * limit;
@@ -235,6 +237,26 @@ export const getMyRFQsService = async (buyerId, page, limit, search = "", status
       order: [["createdAt", "DESC"]],
       limit,
       offset,
+    });
+
+    // Extract RFQ IDs
+    const rfqIds = rows.map((rfq) => rfq.id);
+
+    // Fetch quotes that exist for these RFQs
+    const quotes = await Quote.findAll({
+      attributes: ["rfqId"],
+      where: { rfqId: { [Op.in]: rfqIds } },
+      group: ["rfqId"],
+    });
+
+    const quotedRFQIds = new Set(quotes.map((q) => q.rfqId));
+
+    // Add isQuote to each RFQ
+    const enrichedRFQs = rows.map((rfq) => {
+      return {
+        ...rfq.toJSON(),
+        isQuote: quotedRFQIds.has(rfq.id),
+      };
     });
 
     // Count active RFQs
@@ -259,7 +281,7 @@ export const getMyRFQsService = async (buyerId, page, limit, search = "", status
     const totalPages = Math.ceil(count / limit);
 
     return {
-      rfqs: rows,
+      rfqs: enrichedRFQs,
       totalRFQs: count,
       activeRFQs: activeRFQsCount,
       totalQuotesReceived,
@@ -274,6 +296,7 @@ export const getMyRFQsService = async (buyerId, page, limit, search = "", status
     throw new Error(`Error fetching RFQs: ${error.message}`);
   }
 };
+
 
 export const updateRFQDB = async (rfqId, updateData) => {
   try {
