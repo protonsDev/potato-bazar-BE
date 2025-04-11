@@ -12,6 +12,7 @@ export const createInvoiceSchema = Joi.object({
   paymentMode: Joi.string().optional(),
   paymentReference: Joi.string().optional(),
   notes: Joi.string().allow("").optional(),
+  taxRate:Joi.number().optional().default(0)
 });
 
 export const invoicePaymentSchema = Joi.object({
