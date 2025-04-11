@@ -64,7 +64,6 @@ export const updateNegotiatedPrice = async (negotiationId) => {
     await quote.update({
       negotiatedPrice: negotiation.proposedCost,
       buyerStatus: "accepted",
-      status: "awarded", // If you are tracking quote's internal status too
     });
 
     // Update the related RFQ to awarded
