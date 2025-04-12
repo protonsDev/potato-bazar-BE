@@ -14,7 +14,6 @@ export const rfqSchema = Joi.object({
     .allow(null)
     .label("Grade"),
   size: Joi.string()
-    .valid("Small", "Medium", "Large", "Mixed")
     .allow(null)
     .label("Size"),
   packagingType: Joi.string().allow(null, "").label("Packaging Type"),
@@ -44,6 +43,10 @@ export const rfqSchema = Joi.object({
   category: Joi.string().allow(null, "").label("Category"),
   isTpod: Joi.boolean().allow(null).label("Is TPOD"),
   isUc: Joi.boolean().allow(null).label("Is UC"),
+  isTpodPercent: Joi.number().positive().precision(2).allow(null).label("TPOD Percent"),
+  isUcPercent: Joi.number().positive().precision(2).allow(null).label("UC Percent"),
+  otherStandards: Joi.number().positive().precision(2).allow(null).label("Other Standards"),
+  otherStandardPercent: Joi.number().positive().precision(2).allow(null).label("Other Standard Percent"),
 });
 
 

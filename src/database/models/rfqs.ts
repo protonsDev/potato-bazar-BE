@@ -12,7 +12,7 @@ class RFQ extends Model {
   public targetPrice?: number;
   public potatoVariety?: string;
   public grade?: "Premium" | "Standard" | "Economy";
-  public size?: "Small" | "Medium" | "Large" | "Mixed";
+  public size?: String;
   public packagingType?: string;
   public quantityPerBag?: number;
   public paymentTerms!: "Advance" | "COD" | "Credit";
@@ -25,6 +25,10 @@ class RFQ extends Model {
   public submissionDeadline?: Date;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public isTpodPercent?: number;
+  public isUcPercent?: number;
+  public otherStandards?: number;
+  public otherStandardPercent?: number;
 }
 
 RFQ.init(
@@ -68,7 +72,7 @@ RFQ.init(
       allowNull: true,
     },
     size: {
-      type: DataTypes.ENUM("Small", "Medium", "Large", "Mixed"),
+      type: DataTypes.STRING,
       allowNull: true,
     },
     packagingType: {
@@ -112,8 +116,27 @@ RFQ.init(
       type: DataTypes.BOOLEAN,
       allowNull: true,
       field:"isUc"
-
     },
+    isTpodPercent: {
+      type: DataTypes.DECIMAL(5, 2),
+      allowNull: true,
+      field: "isTpodPercent",
+    },
+    isUcPercent: {
+      type: DataTypes.DECIMAL(5, 2),
+      allowNull: true,
+      field: "isUcPercent",
+    },
+    otherStandards: {
+      type: DataTypes.DECIMAL(5, 2),
+      allowNull: true,
+      field: "otherStandards",
+    },
+    otherStandardPercent: {
+      type: DataTypes.DECIMAL(5, 2),
+      allowNull: true,
+      field: "otherStandardPercent",
+    },  
   },
   {
     sequelize,
