@@ -44,7 +44,7 @@ export const rfqSchema = Joi.object({
   isUc: Joi.boolean().allow(null).label("Is UC"),
   isTpodPercent: Joi.number().optional().label("TPOD Percent"),
   isUcPercent: Joi.number().optional().label("UC Percent"),
-  otherStandards: Joi.number().optional().label("Other Standards"),
+  otherStandards: Joi.string().optional().label("Other Standards"),
   otherStandardPercent: Joi.number().optional().label("Other Standard Percent"),
 });
 

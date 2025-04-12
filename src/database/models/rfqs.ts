@@ -128,7 +128,7 @@ RFQ.init(
       field: "isUcPercent",
     },
     otherStandards: {
-      type: DataTypes.DECIMAL(5, 2),
+      type: DataTypes.STRING,
       allowNull: true,
       field: "otherStandards",
     },
