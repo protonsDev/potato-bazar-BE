@@ -63,18 +63,24 @@ export const updateUserInDB = async (user, user_data) => {
 
 export const findSellerList = async (page, limit, search) => {
   try {
-    const offset = (page - 1) * limit; 
+    const offset = (page - 1) * limit;
+
+    const whereClause = {
+      role: "seller",
+    };
+
+    if (search) {
+      whereClause[Op.or] = [
+        { name: { [Op.iLike]: `%${search}%` } },
+        { address: { [Op.iLike]: `%${search}%` } },
+      ];
+    }
 
     const { rows: sellers, count: totalSellers } = await User.findAndCountAll({
-      where: {
-        role: "seller",
-        companyName: {
-          [Op.iLike]: `%${search}%`,
-        },
-      },
+      where: whereClause,
       limit,
       offset,
-      order: [["createdAt", "DESC"]], 
+      order: [["createdAt", "DESC"]],
     });
 
     return {
