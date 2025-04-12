@@ -62,7 +62,9 @@ export const updateNegotiatedPrice = async (negotiationId) => {
 
     // Update the quote
     await quote.update({
-      negotiatedPrice: negotiation.proposedCost,
+      negotiatedPrice: negotiation.costType === "perKg" 
+        ? negotiation.proposedCostPerKg
+        : negotiation.proposedCostForKg,
       buyerStatus: "accepted",
     });
 

@@ -8,7 +8,9 @@ class Negotiation extends Model {
   public quoteId!: number;
   public proposerId!: number; 
   public proposedBy!: "buyer" | "supplier";
-  public proposedCost!: number;
+  public proposedCostPerKg!: number;  // Cost per kg for the proposed offer
+  public proposedCostForKg!: number;  // For other proposed price, in terms of price per kg
+  public costType!: "perKg" | "forPrice";  // To identify which cost is being proposed
   public status!: "pending" | "accepted" | "rejected";
   public message!: string;
   public readonly createdAt!: Date;
@@ -47,21 +49,30 @@ Negotiation.init(
       allowNull: false,
       field: "proposed_by",
     },
-    proposedCost: {
+    proposedCostPerKg: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
-      field: "proposed_cost",
+      allowNull: true,
+      field: "proposed_cost_per_kg",  
+    },
+    proposedCostForKg: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      field: "proposed_cost_for_kg", 
+    },
+    costType: {
+      type: DataTypes.ENUM("perKg", "forPrice"),
+      allowNull: true,
+      field: "cost_type",
     },
     status: {
       type: DataTypes.ENUM("pending", "accepted", "rejected"),
       allowNull: false,
       defaultValue: "pending",
     },
-    message:{
+    message: {
       type: DataTypes.STRING,
       allowNull: true,
-    }
-
+    },
   },
   {
     sequelize,
