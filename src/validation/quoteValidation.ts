@@ -21,7 +21,8 @@ export const deliveryScheduleQuoteSchema = Joi.object({
       .items(
         Joi.object({
           deliveryScheduleId: Joi.number().integer().required(),
-          pricePerQuintal: Joi.number().precision(2).positive().required(),
+          pricePerKg: Joi.number().precision(2).positive().required(), 
+          forPricePerKg: Joi.number().precision(2).positive().allow(null),
         })
       )
       .min(1)

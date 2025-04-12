@@ -14,18 +14,18 @@ export const createQuote = async (data) => {
   }
 };
 
-export const createDeliveryScheduleQuotes = async (quoteId: number,
-  scheduleQuotes: any, totalValue:any) => {
+export const createDeliveryScheduleQuotes = async (quoteId: number, scheduleQuotes: any, totalValue: any) => {
   try {
     await Quote.update(
       { totalCost: totalValue },  
-      { where: { id: quoteId } } 
+      { where: { id: quoteId } }
     );
-     
+    
     const quoteRecords = scheduleQuotes.map((item) => ({
       quoteId,
       deliveryScheduleId: item.deliveryScheduleId,
-      pricePerQuintal: item.pricePerQuintal,
+      pricePerKg: item.pricePerKg,  
+      forPricePerKg: item.forPricePerKg,  
     }));
 
     const created = await DeliveryScheduleQuote.bulkCreate(quoteRecords);
@@ -34,6 +34,7 @@ export const createDeliveryScheduleQuotes = async (quoteId: number,
     throw error;
   }
 };
+
 
 
 export const updateQuoteStatus = async (quoteId: number, status: "accepted" | "rejected") => {

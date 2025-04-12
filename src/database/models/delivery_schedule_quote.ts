@@ -7,8 +7,8 @@ class DeliveryScheduleQuote extends Model {
   public id!: number;
   public quoteId!: number;
   public deliveryScheduleId!: number;
-  public pricePerQuintal!: number;
-  public readonly createdAt!: Date;
+  public pricePerKg!: number; 
+  public forPricePerKg!: number; 
   public readonly updatedAt!: Date;
 }
 
@@ -29,10 +29,15 @@ DeliveryScheduleQuote.init(
       allowNull: false,
       field: "delivery_schedule_id",
     },
-    pricePerQuintal: {
+    pricePerKg: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      field: "price_per_quintal",
+      field: "price_per_kg",
+    },
+    forPricePerKg: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      field: "for_price_per_kg", 
     },
   },
   {
