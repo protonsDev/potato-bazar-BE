@@ -8,11 +8,11 @@ class RFQ extends Model {
   public buyerId!: number;
   public title!: string;
   public quantity!: number;
-  public unitType!: "MT" | "Quintal" | "Kg";
+  public unitType!: "MT" | "Quintal" | "Kg" | "Ton";
   public targetPrice?: number;
-  public potatoVariety?: string;
+  public potatoVariety?: string[];
   public grade?: "Premium" | "Standard" | "Economy";
-  public size?: String;
+  public size?: string;
   public packagingType?: string;
   public quantityPerBag?: number;
   public paymentTerms!: "Advance" | "COD" | "Credit";
@@ -56,7 +56,7 @@ RFQ.init(
       allowNull: false,
     },
     unitType: {
-      type: DataTypes.ENUM("MT", "Quintal", "Kg"),
+      type: DataTypes.ENUM("MT", "Quintal", "Kg", "Ton"),
       allowNull: false,
     },
     targetPrice: {
@@ -64,7 +64,7 @@ RFQ.init(
       allowNull: true,
     },
     potatoVariety: {
-      type: DataTypes.STRING,
+      type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: true,
     },
     grade: {
@@ -110,12 +110,12 @@ RFQ.init(
     isTpod: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
-      field:"isTpod"
+      field: "isTpod",
     },
     isUc: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
-      field:"isUc"
+      field: "isUc",
     },
     isTpodPercent: {
       type: DataTypes.DECIMAL(5, 2),
@@ -136,7 +136,7 @@ RFQ.init(
       type: DataTypes.DECIMAL(5, 2),
       allowNull: true,
       field: "otherStandardPercent",
-    },  
+    },
   },
   {
     sequelize,
@@ -147,8 +147,6 @@ RFQ.init(
   }
 );
 
-// Define relationship with User model
 RFQ.belongsTo(User, { foreignKey: "buyerId", as: "buyer" });
-
 
 export default RFQ;

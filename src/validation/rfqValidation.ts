@@ -4,18 +4,16 @@ export const rfqSchema = Joi.object({
   title: Joi.string().min(3).max(255).required().label("Title"),
   quantity: Joi.number().positive().precision(2).required().label("Quantity"),
   unitType: Joi.string()
-    .valid("MT", "Quintal", "Kg")
+    .valid("MT", "Quintal", "Kg", "Ton")
     .required()
     .label("Unit Type"),
-  targetPrice: Joi.number().positive().precision(2).allow(null).label("Target Price"),
-  potatoVariety: Joi.string().allow(null, "").label("Potato Variety"),
+  targetPrice: Joi.number().optional().label("Target Price"),
+  potatoVariety: Joi.array().items(Joi.string()).allow(null).label("Potato Variety"),
   grade: Joi.string()
     .valid("Premium", "Standard", "Economy")
     .allow(null)
     .label("Grade"),
-  size: Joi.string()
-    .allow(null)
-    .label("Size"),
+  size: Joi.string().allow(null).label("Size"),
   packagingType: Joi.string().allow(null, "").label("Packaging Type"),
   quantityPerBag: Joi.number().positive().precision(2).allow(null).label("Quantity Per Bag"),
   paymentTerms: Joi.string()
@@ -44,10 +42,10 @@ export const rfqSchema = Joi.object({
   category: Joi.string().allow(null, "").label("Category"),
   isTpod: Joi.boolean().allow(null).label("Is TPOD"),
   isUc: Joi.boolean().allow(null).label("Is UC"),
-  isTpodPercent: Joi.number().positive().precision(2).allow(null).label("TPOD Percent"),
-  isUcPercent: Joi.number().positive().precision(2).allow(null).label("UC Percent"),
-  otherStandards: Joi.number().positive().precision(2).allow(null).label("Other Standards"),
-  otherStandardPercent: Joi.number().positive().precision(2).allow(null).label("Other Standard Percent"),
+  isTpodPercent: Joi.number().optional().label("TPOD Percent"),
+  isUcPercent: Joi.number().optional().label("UC Percent"),
+  otherStandards: Joi.number().optional().label("Other Standards"),
+  otherStandardPercent: Joi.number().optional().label("Other Standard Percent"),
 });
 
 
