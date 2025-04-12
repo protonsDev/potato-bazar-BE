@@ -123,13 +123,11 @@ Invoice.belongsTo(User, {
   as: "seller",
 });
 
-// Buyer association
 Invoice.belongsTo(User, {
   foreignKey: "buyerId",
   as: "buyer",
 });
 
-// Quote association
 Invoice.belongsTo(Quote, {
   foreignKey: "quoteId",
   as: "quote",
