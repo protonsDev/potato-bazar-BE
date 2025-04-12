@@ -34,6 +34,7 @@ export const rfqSchema = Joi.object({
       Joi.object({
         deliveryLocation: Joi.string().min(3).required().label("Delivery Location"),
         quantity: Joi.number().positive().required().label("Quantity"),
+        startDate: Joi.date().required().label("Start Date"),
         deliveryDeadline: Joi.date().required().label("Delivery Deadline"),
       })
     )

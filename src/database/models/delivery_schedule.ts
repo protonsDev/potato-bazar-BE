@@ -8,6 +8,7 @@ class DeliverySchedule extends Model {
   public deliveryLocation!: string;
   public quantity!: number;
   public deliveryDeadline!: Date;
+  public startDate!: Date;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -37,6 +38,10 @@ DeliverySchedule.init(
       allowNull: false,
     },
     deliveryDeadline: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    startDate: {
       type: DataTypes.DATE,
       allowNull: false,
     }
