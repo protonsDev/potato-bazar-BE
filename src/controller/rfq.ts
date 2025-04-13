@@ -20,7 +20,10 @@ export const createRFQ = async (req, res) => {
       status,
       category,
       isTpod,
-      isUc
+      isUc,
+      isTpodPercent,
+      isUcPercent,
+      otherStandards
     } = req.body;
     if (req.user.role != "buyer") {
       return res
