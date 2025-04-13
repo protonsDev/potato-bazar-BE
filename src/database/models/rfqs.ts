@@ -8,7 +8,7 @@ class RFQ extends Model {
   public buyerId!: number;
   public title!: string;
   public quantity!: number;
-  public unitType!: "MT" | "Quintal" | "Kg" | "Ton";
+  public unitType!: String;
   public targetPrice?: number;
   public potatoVariety?: string[];
   public grade?: "Premium" | "Standard" | "Economy";
@@ -56,7 +56,7 @@ RFQ.init(
       allowNull: false,
     },
     unitType: {
-      type: DataTypes.ENUM("MT", "Quintal", "Kg", "Ton"),
+      type: DataTypes.STRING,
       allowNull: false,
     },
     targetPrice: {
