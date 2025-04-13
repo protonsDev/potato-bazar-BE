@@ -9,6 +9,7 @@ class DeliverySchedule extends Model {
   public quantity!: number;
   public deliveryDeadline!: Date;
   public startDate!: Date;
+  public remark?: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -44,7 +45,11 @@ DeliverySchedule.init(
     startDate: {
       type: DataTypes.DATE,
       allowNull: false,
-    }
+    },
+    remark: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    }    
   },
   {
     sequelize,

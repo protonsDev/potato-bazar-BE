@@ -9,6 +9,7 @@ class DeliveryScheduleQuote extends Model {
   public deliveryScheduleId!: number;
   public pricePerKg!: number; 
   public forPricePerKg!: number; 
+  public remark?: string;
   public readonly updatedAt!: Date;
 }
 
@@ -39,6 +40,10 @@ DeliveryScheduleQuote.init(
       allowNull: false,
       field: "for_price_per_kg", 
     },
+    remark: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    }    
   },
   {
     sequelize,

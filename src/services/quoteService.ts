@@ -25,7 +25,8 @@ export const createDeliveryScheduleQuotes = async (quoteId: number, scheduleQuot
       quoteId,
       deliveryScheduleId: item.deliveryScheduleId,
       pricePerKg: item.pricePerKg,  
-      forPricePerKg: item.forPricePerKg,  
+      forPricePerKg: item.forPricePerKg, 
+      remarks: item.remarks,
     }));
 
     const created = await DeliveryScheduleQuote.bulkCreate(quoteRecords);
