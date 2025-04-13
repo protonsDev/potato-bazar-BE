@@ -14,6 +14,7 @@ class User extends Model {
   public gstin?: string;
   public isVerified!: boolean;
   public isActive!: boolean;
+  public alternatePhone?: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
@@ -84,6 +85,11 @@ User.init(
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
+    alternatePhone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: "alternate_phone",
+    },    
   },
   {
     sequelize,

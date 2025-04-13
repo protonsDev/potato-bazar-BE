@@ -13,5 +13,9 @@ export const userSchema = Joi.object({
   address: Joi.string().allow(null, "").label("Address"),
   gstin: Joi.string().optional(),
   isVerified: Joi.boolean().default(false).label("Is Verified"),
-  isActive: Joi.boolean().default(true).label("Is Active")
+  isActive: Joi.boolean().default(true).label("Is Active"),
+  alternatePhone: Joi.string()
+    .pattern(/^[0-9]{10}$/)
+    .required()
+    .label("alternatePhone"),
 });
