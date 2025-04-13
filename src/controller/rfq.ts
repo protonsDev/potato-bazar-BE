@@ -53,7 +53,10 @@ export const createRFQ = async (req, res) => {
       status,
       category,
       isTpod,
-      isUc
+      isUc,
+      isTpodPercent,
+      isUcPercent,
+      otherStandards
     });
 
     return res.status(201).json({
