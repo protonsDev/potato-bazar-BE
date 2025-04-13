@@ -11,7 +11,7 @@ class RFQ extends Model {
   public unitType!: String;
   public targetPrice?: number;
   public potatoVariety?: string[];
-  public grade?: "Premium" | "Standard" | "Economy";
+  public grade?: String;
   public size?: string;
   public packagingType?: string;
   public quantityPerBag?: number;
@@ -68,9 +68,9 @@ RFQ.init(
       allowNull: true,
     },
     grade: {
-      type: DataTypes.ENUM("Premium", "Standard", "Economy"),
+      type: DataTypes.STRING,
       allowNull: true,
-    },
+    },    
     size: {
       type: DataTypes.STRING,
       allowNull: true,

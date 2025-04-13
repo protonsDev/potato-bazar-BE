@@ -10,7 +10,6 @@ export const rfqSchema = Joi.object({
   targetPrice: Joi.number().optional().label("Target Price"),
   potatoVariety: Joi.array().items(Joi.string()).allow(null).label("Potato Variety"),
   grade: Joi.string()
-    .valid("Premium", "Standard", "Economy")
     .allow(null)
     .label("Grade"),
   size: Joi.string().allow(null).label("Size"),
