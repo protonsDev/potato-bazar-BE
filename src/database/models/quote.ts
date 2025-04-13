@@ -21,6 +21,8 @@ class Quote extends Model {
   public buyerStatus?:string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public targetValueForKg?: number;
+
 }
 
 Quote.init(
@@ -98,6 +100,11 @@ Quote.init(
       type: DataTypes.ENUM("accepted", "rejected"),
       allowNull: true,
       field: "buyer_status",
+    },
+    targetValueForKg: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      field: "target_value_for_kg",
     },
   },
   {

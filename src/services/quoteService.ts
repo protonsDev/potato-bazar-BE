@@ -14,18 +14,30 @@ export const createQuote = async (data) => {
   }
 };
 
-export const createDeliveryScheduleQuotes = async (quoteId: number, scheduleQuotes: any, totalValue: any) => {
+export const createDeliveryScheduleQuotes = async (
+  quoteId: number,
+  scheduleQuotes: any[],
+  totalValue?: number,
+  targetValueForKg?: number
+) => {
   try {
-    await Quote.update(
-      { totalCost: totalValue },  
-      { where: { id: quoteId } }
-    );
-    
+    const updateData: any = {};
+    if (totalValue !== undefined) {
+      updateData.totalCost = totalValue;
+    }
+    if (targetValueForKg !== undefined) {
+      updateData.targetValueForKg = targetValueForKg;
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await Quote.update(updateData, { where: { id: quoteId } });
+    }
+
     const quoteRecords = scheduleQuotes.map((item) => ({
       quoteId,
       deliveryScheduleId: item.deliveryScheduleId,
-      pricePerKg: item.pricePerKg,  
-      forPricePerKg: item.forPricePerKg, 
+      pricePerKg: item.pricePerKg,
+      forPricePerKg: item.forPricePerKg,
       remarks: item.remarks,
     }));
 
@@ -35,6 +47,7 @@ export const createDeliveryScheduleQuotes = async (quoteId: number, scheduleQuot
     throw error;
   }
 };
+
 
 
 

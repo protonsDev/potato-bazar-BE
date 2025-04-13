@@ -14,14 +14,22 @@ export const submitQuote = async (req, res) => {
 
   export const submitDeliveryScheduleQuotes = async (req, res) => {
     try {
-      const { quoteId, deliveryQuotes,totalValue } = req.body;
-      const result = await createDeliveryScheduleQuotes(quoteId, deliveryQuotes,totalValue);
+      const { quoteId, deliveryQuotes, totalValue, targetValueForKg } = req.body;
+  
+      const result = await createDeliveryScheduleQuotes(
+        quoteId,
+        deliveryQuotes,
+        totalValue,
+        targetValueForKg
+      );
+  
       return res.status(201).json({ success: true, data: result });
     } catch (err: any) {
       console.error("Error in submitDeliveryScheduleQuotes:", err);
       return res.status(500).json({ success: false, message: err.message });
     }
   };
+  
 
   export const modifyQuoteStatus = async (req, res) => {
     try {
