@@ -4,6 +4,7 @@ import RFQ from "../database/models/rfqs";
 import User from "../database/models/user";
 import { Op } from "sequelize";
 import { notifyUser } from "./notificationService";
+import DeliverySchedule from "../database/models/delivery_schedule";
 
 
 export const createQuote = async (data) => {
@@ -171,26 +172,39 @@ try{
 }
 }
 
-export const getQuotesListByRfqDB = async (rfqId,page, limit) => {
-  try{
+export const getQuotesListByRfqDB = async (rfqId, page, limit) => {
+  try {
     const offset = (page - 1) * limit;
+
     const { count, rows } = await Quote.findAndCountAll({
-      where: { rfqId:rfqId },
-      include:[
+      where: { rfqId },
+      include: [
         {
-          model:RFQ,
+          model: RFQ,
           as: "rfq",
         },
         {
           model: User,
-          as:"supplier"
-        }
+          as: "supplier",
+        },
+        {
+          model: DeliveryScheduleQuote,
+          as: "deliveryScheduleQuotes", 
+          include: [
+            {
+              model: DeliverySchedule,
+              as: "deliverySchedule", 
+            },
+          ],
+        },
       ],
       order: [["createdAt", "DESC"]],
       limit,
       offset,
     });
+
     const totalPages = Math.ceil(count / limit);
+
     return {
       quote: rows,
       totalRFQs: count,
@@ -201,8 +215,8 @@ export const getQuotesListByRfqDB = async (rfqId,page, limit) => {
       },
     };
 
-  }catch(error){
+  } catch (error) {
     throw error;
   }
-}
+};
 
