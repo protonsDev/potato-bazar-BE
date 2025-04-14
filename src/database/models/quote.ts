@@ -22,6 +22,7 @@ class Quote extends Model {
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   public targetValueForKg?: number;
+  public costType!: string;
 
 }
 
@@ -106,6 +107,11 @@ Quote.init(
       allowNull: true,
       field: "target_value_for_kg",
     },
+    costType: {
+      type: DataTypes.ENUM("perKg", "forPrice"),
+      allowNull: true,
+      field: "cost_type",
+    }
   },
   {
     sequelize,

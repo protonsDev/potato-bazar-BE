@@ -33,13 +33,13 @@ export const submitQuote = async (req, res) => {
 
   export const modifyQuoteStatus = async (req, res) => {
     try {
-      const { quoteId, status } = req.body;
+      const { quoteId, status,costType } = req.body;
   
       if (!["accepted", "rejected"].includes(status)) {
         return res.status(400).json({ success: false, message: "Invalid status" });
       }
   
-      const updatedQuote = await updateQuoteStatus(quoteId, status);
+      const updatedQuote = await updateQuoteStatus(quoteId, status,costType);
   
       if (!updatedQuote) {
         return res.status(400).json({ success: false, message: "Another quote has already been accepted for this RFQ" });
