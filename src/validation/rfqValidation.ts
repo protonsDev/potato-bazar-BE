@@ -33,7 +33,7 @@ export const rfqSchema = Joi.object({
         quantity: Joi.number().positive().required().label("Quantity"),
         startDate: Joi.date().required().label("Start Date"),
         deliveryDeadline: Joi.date().required().label("Delivery Deadline"),
-        remarks: Joi.string().allow(null, "").label("Remarks"),
+        remark: Joi.string().allow(null, "").label("Remarks"),
       })
     )
     .min(1)
