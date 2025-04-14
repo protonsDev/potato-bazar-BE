@@ -51,3 +51,19 @@ export const getUserNotifications = async (userId, page = 1, limit = 10) => {
     },
   };
 };
+
+export const markNotificationAsRead = async (userId: number, notificationId?: number) => {
+  if (notificationId) {
+    const updated = await Notification.update(
+      { read: true },
+      { where: { id: notificationId, userId } }
+    );
+    return updated;
+  } else {
+    const updated = await Notification.update(
+      { read: true },
+      { where: { userId, read: false } }
+    );
+    return updated;
+  }
+};

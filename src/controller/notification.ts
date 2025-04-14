@@ -36,3 +36,18 @@ export const getMyNotifications = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const markAsRead = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { notificationId } = req.body;
+
+    await subscriberService.markNotificationAsRead(userId, notificationId);
+
+    res.status(200).json({ success: true, message: "Marked as read" });
+  } catch (err) {
+    console.error("Mark notification as read error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
