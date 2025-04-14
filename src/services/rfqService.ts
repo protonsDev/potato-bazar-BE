@@ -5,6 +5,7 @@ import RFQSupplier from "../database/models/rfqSupplier";
 import { Op } from "sequelize";
 import User from "../database/models/user";
 import Quote from "../database/models/quote";
+import { notifyUser } from "./notificationService";
 
 
 export const createRFQDB = async (rfqData) => {
@@ -57,6 +58,7 @@ export const getRFQByIdDB = async (id) => {
   });
 };
 
+
 export const addSuppliersToRFQ = async (
   rfqId: number,
   supplierIds: number[]
@@ -68,12 +70,28 @@ export const addSuppliersToRFQ = async (
     }));
 
     const createdSuppliers = await RFQSupplier.bulkCreate(supplierRecords);
+    // Send notification to each supplier
+    const suppliers = await User.findAll({
+      where: { id: supplierIds },
+    });
+
+    await Promise.all(
+      suppliers.map((supplier) =>
+        notifyUser(
+          supplier.id,
+          "New RFQ Assigned",
+          `You’ve been invited to respond to RFQ #${rfqId}.`,
+          "rfq_invitation"
+        )
+      )
+    );
 
     return createdSuppliers;
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(`Error adding suppliers: ${error.message}`);
   }
 };
+
 
 export const getSupplierRFQsService = async (
   supplierId,

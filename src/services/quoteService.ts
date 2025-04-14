@@ -3,11 +3,26 @@ import Quote from "../database/models/quote";
 import RFQ from "../database/models/rfqs";
 import User from "../database/models/user";
 import { Op } from "sequelize";
+import { notifyUser } from "./notificationService";
 
 
 export const createQuote = async (data) => {
   try {
     const quote = await Quote.create(data);
+    const rfq = await RFQ.findByPk(data.rfqId);
+    if (rfq) {
+      const buyer = await User.findByPk(rfq.buyerId);
+
+      if (buyer) {
+        await notifyUser(
+          buyer.id,
+          "New Quote Received",
+          `A supplier has submitted a quote for your RFQ #${rfq.id}.`,
+          "quote_submitted"
+        );
+      }
+    }
+
     return quote;
   } catch (error) {
     throw error;

@@ -34,7 +34,6 @@ export const sendPushNotification = async (
 
     console.log("Notification sent! OneSignal response:", response.data);
   } catch (error: any) {
-    console.error("Failed to send notification:", error.response?.data || error);
     throw error;
   }
 };
