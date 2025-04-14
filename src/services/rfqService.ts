@@ -6,6 +6,7 @@ import { Op } from "sequelize";
 import User from "../database/models/user";
 import Quote from "../database/models/quote";
 import { notifyUser } from "./notificationService";
+import DeliveryScheduleQuote from "../database/models/delivery_schedule_quote";
 
 
 export const createRFQDB = async (rfqData) => {
@@ -488,6 +489,74 @@ export const getSupplierRFQsServiceV2 = async (supplierId, search = "") => {
     throw new Error(`Error fetching supplier RFQs: ${error.message}`);
   }
 };
+
+export const getBuyerRFQDetailsV2 = async (rfqId: number) => {
+  try {
+    const rfq = await RFQ.findByPk(rfqId, {
+      include: [
+        {
+          model: User,
+          as: "buyer",
+        },
+        {
+          model: DeliverySchedule,
+          as: "deliverySchedules",
+        },
+        {
+          model: RFQSupplier,
+          as: "suppliers",
+          attributes: ["supplierId"],
+          include: [
+            {
+              model: User,
+              as: "supplier",
+              attributes: ["id", "name", "email"],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!rfq) {
+      return { error: true, status: 404, message: "RFQ not found" };
+    }
+
+    // Fetch all quotes for this RFQ
+    const allQuotes = await Quote.findAll({
+      where: { rfqId },
+      include: [
+        {
+          model: User,
+          as: "supplier",
+          attributes: ["id", "name", "email"],
+        },
+        {
+          model: DeliveryScheduleQuote,
+          as: "deliveryScheduleQuotes", 
+          include: [
+            {
+              model: DeliverySchedule,
+              as: "deliverySchedule", 
+            },
+          ],
+        },
+      ],
+    });
+
+    // Check if any submitted quote exists
+    const isQuoteSubmitted = allQuotes.some(q => q.status === "submitted");
+
+    return {
+      ...rfq.toJSON(),
+      isQuote: isQuoteSubmitted,
+      quotes: allQuotes.map(q => q.toJSON()), // optional: format quote objects
+    };
+  } catch (err) {
+    console.error("Error in getBuyerRFQDetailsV2:", err);
+    return { error: true, status: 500, message: "Server error" };
+  }
+};
+
 
 
 
